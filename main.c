@@ -1,6 +1,6 @@
 #include "PIN_LPC17xx.h"
 #include "LPC17xx.h"
-
+#include "GPIO_LPC17xx.h"
 #include "Open1768_LCD.h"
 #include "LCD_ILI9325.h"
 #include "asciiLib.h"
@@ -8,6 +8,26 @@
 
 #include <stdio.h>
 #include <math.h>
+#include <stdbool.h>
+
+static double A;
+static double B;
+static double C;
+static double D;
+static double E;
+static double F;
+
+
+static void touchpanelDelayUS(uint32_t cnt) {
+	volatile uint32_t i;
+	for (i = 0; i < cnt; i++) {
+		volatile uint8_t us = 12; /*  */
+		while (us--) /*  */
+		{
+			;
+		}
+	}
+}
 
 void send(const char *str)
 {
@@ -34,26 +54,24 @@ void send(const char *str)
      LPC_UART0->FCR = 1;
  }
 
- void EINT3_init()
- {
-	 PIN_Configure(0, 19, 0, 0, 0);
-	 LPC_GPIOINT-> IO0IntEnF = (1<<19);
-	 NVIC_EnableIRQ(EINT3_IRQn);
-	 NVIC_GetActive(EINT3_IRQn);
- }
- 
- void EINT3_IRQHandler()
-	{
-		send("dupa");
-		int x;
-		int y;
-		touchpanelGetXY(&x, &y);
-		char temp[10];
-		LPC_GPIOINT-> IO0IntEnF = (1<<19);
-		NVIC_ClearPendingIRQ(EINT3_IRQn);
-		sprintf(temp, "%d, %d \r\n", x, y);
-		send(temp);
-	}
+// void EINT3_init()
+// {
+//	 PIN_Configure(0, 19, 0, 0, 0);
+//	 LPC_GPIOINT-> IO0IntEnF = (1<<19);
+//	 NVIC_EnableIRQ(EINT3_IRQn);
+//	 NVIC_GetActive(EINT3_IRQn);
+// }
+// 
+// void EINT3_IRQHandler()
+//	{
+//		touchpanelGetXY(&x, &y);
+//		char temp[10];
+//		LPC_GPIOINT-> IO0IntEnF = (1<<19);
+//		NVIC_ClearPendingIRQ(EINT3_IRQn);
+//		sprintf(temp, "%d, %d \r\n", x, y);
+//		send(temp);
+//		cal = true;
+//	}
  void lcdWriteChar(uint16_t x_start, uint16_t y_start, unsigned char letter[16])	
 	{
 		lcdWriteReg(ADRX_RAM, x_start);
@@ -85,7 +103,7 @@ void send(const char *str)
  }
  
  void lcdDrawLine(uint16_t x0, uint16_t y0, 
-									uint16_t x1, uint16_t y1)
+									uint16_t x1, uint16_t y1, uint16_t color)
  {
 	 if(x1 >= LCD_MAX_X || x0 >=LCD_MAX_X || 
 			y1 >= LCD_MAX_Y || y0 >= LCD_MAX_Y )
@@ -99,12 +117,17 @@ void send(const char *str)
   for (;;){  /* loop */
 			lcdWriteReg(ADRX_RAM, x0);
 			lcdWriteReg(ADRY_RAM, y0);
-			lcdWriteReg(DATA_RAM, LCDBlack);
+			lcdWriteReg(DATA_RAM, color);
     if (x0 == x1 && y0 == y1) break;
     e2 = 2 * err;
     if (e2 >= dy) { err += dy; x0 += sx; } /* e_xy+e_x > 0 */
     if (e2 <= dx) { err += dx; y0 += sy; } /* e_xy+e_y < 0 */
   }
+ }
+ void lcdDrawCross(uint16_t x, uint16_t y, uint16_t len, uint16_t color)
+ {
+	lcdDrawLine(x - len, y, x + len, y, color);
+	lcdDrawLine(x, y - len, x, y + len, color);
  }
  
  /*rysuje krzyzyki, ktorych punkty przeciecia sa 
@@ -112,20 +135,13 @@ void send(const char *str)
  void lcdDrawConfig()
 	{
 	//lewy gorny rog
-	lcdDrawLine(10,20,30,20);
-	lcdDrawLine(20,10,20,30);
+		lcdDrawCross(20, 20, 10, LCDBlack);
 	
 	//prawy gorny rog
-	lcdDrawLine(LCD_MAX_X - 20, 10, LCD_MAX_X - 20, 30);
-	lcdDrawLine(LCD_MAX_X - 30, 20, LCD_MAX_X - 10, 20);
-	
-	//lewy dolny rog
-	lcdDrawLine(20, LCD_MAX_Y - 10, 20, LCD_MAX_Y - 30);
-	lcdDrawLine(10, LCD_MAX_Y - 20, 30, LCD_MAX_Y - 20);
-	
-	//prawy dolny rog
-	lcdDrawLine(LCD_MAX_X - 20, LCD_MAX_Y - 10, LCD_MAX_X - 20, LCD_MAX_Y - 30);
-	lcdDrawLine(LCD_MAX_X - 10, LCD_MAX_Y - 20, LCD_MAX_X - 30, LCD_MAX_Y - 20);
+		lcdDrawCross(LCD_MAX_X-20, 20, 10, LCDBlack);
+		
+		//srodek
+		lcdDrawCross(LCD_MAX_X/2, LCD_MAX_Y-20, 10, LCDBlack);
  }
 
 /*rysuje interface*/
@@ -135,11 +151,11 @@ void send(const char *str)
 	int y = LCD_MAX_Y / 3;
 	int y_key = y / 3 * 2;
 	
-	lcdDrawLine(0, y, LCD_MAX_X-1, y);
-	lcdDrawLine(0, y+y_key, LCD_MAX_X-1, y+y_key);
-	lcdDrawLine(0, y+y_key*2, LCD_MAX_X-1, y+y_key*2);
-	lcdDrawLine(x, y, x, LCD_MAX_Y-1);
-	lcdDrawLine(x+x, y, x+x, LCD_MAX_Y-1);
+	lcdDrawLine(0, y, LCD_MAX_X-1, y, LCDBlack);
+	lcdDrawLine(0, y+y_key, LCD_MAX_X-1, y+y_key, LCDBlack);
+	lcdDrawLine(0, y+y_key*2, LCD_MAX_X-1, y+y_key*2, LCDBlack);
+	lcdDrawLine(x, y, x, LCD_MAX_Y-1, LCDBlack);
+	lcdDrawLine(x+x, y, x+x, LCD_MAX_Y-1, LCDBlack);
 	
 	unsigned char letter[16] = {'\0'};
 	
@@ -170,11 +186,50 @@ void send(const char *str)
 	GetASCIICode(0, letter,'9');
 	lcdWriteChar(LCD_MAX_X/2 + x- 4, y*2 + y_key - 8, letter);
 }
+
+void lcdGetCoords(int *x, int *y)
+{
+		while(1){
+			if(!GPIO_PinRead(0,19)){
+				touchpanelGetXY(x,y);
+				char temp[10];
+				sprintf(temp, "%d, %d \r\n", *x, *y);
+				send(temp);
+				LPC_GPIOINT-> IO0IntEnF = (1<<19);
+				NVIC_ClearPendingIRQ(EINT3_IRQn);
+				break;
+		}
+	}
+}
+
+void lcdCallibrate()
+{
+	int x_arr[3];
+	int y_arr[3];
+	
+	static int callibrated = 0;
+	if(callibrated > 2)
+	{
+		return;
+	}
+	lcdDrawCross(20, 20, 10, LCDRed);
+	lcdGetCoords(&x_arr[0], &y_arr[0]);
+	touchpanelDelayUS(2000);
+	lcdDrawCross(20, 20, 10, LCDBlack);
+	lcdDrawCross(LCD_MAX_X-20, 20, 10, LCDRed);
+	lcdGetCoords(&x_arr[1], &y_arr[1]);
+	touchpanelDelayUS(2000);
+	lcdDrawCross(LCD_MAX_X-20, 20, 10, LCDBlack);
+	lcdDrawCross(LCD_MAX_X/2, LCD_MAX_Y-20, 10, LCDRed);
+	lcdGetCoords(&x_arr[2], &y_arr[2]);
+	touchpanelDelayUS(2000);
+	lcdDrawCross(LCD_MAX_X/2, LCD_MAX_Y-20, 10, LCDBlack);
+}
  
  int main(void)
  {
 	UART_init();
-	EINT3_init();
+//	EINT3_init();
 	touchpanelInit();
 	send("START\r\n");
 	lcdConfiguration();
@@ -188,6 +243,8 @@ void send(const char *str)
 	}
 	lcdDrawConfig();
 	lcdDrawInterface();
+	lcdCallibrate();
+	
 //	char temp[10];
 //	sprintf(temp, "%d", LCD_MAX_Y);
 //	send(temp);
