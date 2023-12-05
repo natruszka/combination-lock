@@ -16,6 +16,7 @@ static void touchpanelDelayUS(uint32_t cnt)
 	}
 }
 
+
 void lcdTouchscreenGetCoords(int *x, int *y)
 {
 	char temp[20];
