@@ -105,15 +105,15 @@ uint16_t lcdRead (void)
    uint16_t valLSB, valMSB;
 
    LPC_GPIO2->FIODIR &= ~(0xFF);         /* P2.0...P2.7 Input */
-   LCD_DIR(0)                           /* Interface B->A */
-   LCD_EN(0)                            /* Enable 2B->2A */
+   LCD_DIR(0);                           /* Interface B->A */
+   LCD_EN(0);                            /* Enable 2B->2A */
    wait_delay(50);                       /* delay some times */
    valMSB = LPC_GPIO2->FIOPIN0;          /* Read D8..D15 */
-   LCD_EN(1)                            /* Enable 1B->1A */
+   LCD_EN(1);                            /* Enable 1B->1A */
    wait_delay(50);                       /* delay some times */
    //value = (value << 8) |
    valLSB = LPC_GPIO2->FIOPIN0;          /* Read D0..D7 */
-   LCD_DIR(1)
+   LCD_DIR(1);
    return  (valMSB << 8 | valLSB);
 }
 
@@ -132,15 +132,15 @@ void lcdWriteIndex(uint16_t index)
    // ** nWR      -----\___/---------*
    // ** DB[0-15] ------[###]--------*
    **********************************/
-   LCD_CS(0)
-   LCD_RS(0)
-   LCD_RD(1)
+   LCD_CS(0);
+   LCD_RS(0);
+   LCD_RD(1);
    lcdSend( index );
    wait_delay(50);
-   LCD_WR(0)
+   LCD_WR(0);
    wait_delay(1);
-   LCD_WR(1)
-   LCD_CS(1)
+   LCD_WR(1);
+   LCD_CS(1);
 }
 
 /*******************************************************************************
@@ -158,13 +158,13 @@ void lcdWriteData(uint16_t data)
    // ** nWR      -----\___/--------**
    // ** DB[0-15] ------[###]-------**
    **********************************/
-   LCD_CS(0)
-   LCD_RS(1)
+   LCD_CS(0);
+   LCD_RS(1);
    lcdSend( data );
-   LCD_WR(0)
+   LCD_WR(0);
    wait_delay(1);
-   LCD_WR(1)
-   LCD_CS(1)
+   LCD_WR(1);
+   LCD_CS(1);
 }
 
 /*******************************************************************************

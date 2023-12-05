@@ -5,7 +5,7 @@
 int main ( void )
 {
 	UART_init ();
-	//	EINT3_init();
+	EINT3_init();
 	touchpanelInit ();
 	send ( "START\r\n" );
 	lcdConfiguration ();
