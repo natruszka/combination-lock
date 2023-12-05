@@ -50,3 +50,13 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+# VS Code
+.vscode/*
+
+# Keil uVision
+DebugConfig/*
+Objects/*
+RTE/*
+*.uvguix.*
+*.uvoptx
