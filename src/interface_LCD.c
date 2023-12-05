@@ -82,7 +82,7 @@ void lcdDrawConfigTouchpanel ( void )
     lcdDrawCross ( LCD_MAX_X - 20, 20, 10, LCDBlack );
 
     //srodek
-    lcdDrawCross ( LCD_MAX_X / 2, LCD_MAX_Y - 20, 10, LCDBlack );
+    lcdDrawCross ( 20, LCD_MAX_Y - 20, 10, LCDBlack );
 }
 
 /*rysuje interface*/
