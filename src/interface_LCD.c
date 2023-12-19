@@ -93,40 +93,51 @@ void lcdDrawInterface ( void )
 {
     uint16_t x = LCD_MAX_X / 3;
     uint16_t y = LCD_MAX_Y / 3;
-    uint16_t y_key = y / 3 * 2;
+    uint16_t y_key = y / 2;
+		uint16_t y_numbers = y_key / 2;
 
-    lcdDrawLine ( 0, y, LCD_MAX_X - 1, y, LCDBlack );
-    lcdDrawLine ( 0, y + y_key, LCD_MAX_X - 1, y + y_key, LCDBlack );
-    lcdDrawLine ( 0, y + y_key * 2, LCD_MAX_X - 1, y + y_key * 2, LCDBlack );
+    lcdDrawLine ( 0, y, LCD_MAX_X - 1, y, LCDBlack ); //gorna pozioma 
+    lcdDrawLine ( 0, y + y_key, LCD_MAX_X - 1, y + y_key, LCDBlack ); //druga pozioma
+    lcdDrawLine ( 0, y + y_key * 2, LCD_MAX_X - 1, y + y_key * 2, LCDBlack ); //trzecia pozioma
+		lcdDrawLine ( 0, y + y_key * 3, LCD_MAX_X - 1, y + y_key * 3, LCDBlack ); //ostatnia
     lcdDrawLine ( x, y, x, LCD_MAX_Y - 1, LCDBlack );
     lcdDrawLine ( x + x, y, x + x, LCD_MAX_Y - 1, LCDBlack );
 
     unsigned char letter[16];
 
     GetASCIICode ( 0, letter, '1' );
-    lcdWriteChar ( LCD_MAX_X / 2 - x - 4, y * 2 - y_key - 8, letter );
+    lcdWriteChar ( LCD_MAX_X / 2 - x - 4, y + y_numbers - 8, letter );
 
     GetASCIICode ( 0, letter, '2' );
-    lcdWriteChar ( LCD_MAX_X / 2 - 4, y * 2 - y_key - 8, letter );
+    lcdWriteChar ( LCD_MAX_X / 2 - 4, y + y_numbers - 8, letter );
 
     GetASCIICode ( 0, letter, '3' );
-    lcdWriteChar ( LCD_MAX_X / 2 + x - 4, y * 2 - y_key - 8, letter );
+    lcdWriteChar ( LCD_MAX_X / 2 + x - 4, y + y_numbers - 8, letter );
 
     GetASCIICode ( 0, letter, '4' );
-    lcdWriteChar ( LCD_MAX_X / 2 - x - 4, y * 2 - 8, letter );
+    lcdWriteChar ( LCD_MAX_X / 2 - x - 4, y * 2 - y_numbers - 8, letter );
 
     GetASCIICode ( 0, letter, '5' );
-    lcdWriteChar ( LCD_MAX_X / 2 - 4, y * 2 - 8, letter );
+    lcdWriteChar ( LCD_MAX_X / 2 - 4, y * 2 - y_numbers - 8, letter );
 
     GetASCIICode ( 0, letter, '6' );
-    lcdWriteChar ( LCD_MAX_X / 2 + x - 4, y * 2 - 8, letter );
+    lcdWriteChar ( LCD_MAX_X / 2 + x - 4, y * 2 - y_numbers - 8, letter );
 
     GetASCIICode ( 0, letter, '7' );
-    lcdWriteChar ( LCD_MAX_X / 2 - x - 4, y * 2 + y_key - 8, letter );
+    lcdWriteChar ( LCD_MAX_X / 2 - x - 4, y * 2 + y_numbers - 8, letter );
 
     GetASCIICode ( 0, letter, '8' );
-    lcdWriteChar ( LCD_MAX_X / 2 - 4, y * 2 + y_key - 8, letter );
+    lcdWriteChar ( LCD_MAX_X / 2 - 4, y * 2 + y_numbers - 8, letter );
 
     GetASCIICode ( 0, letter, '9' );
-    lcdWriteChar ( LCD_MAX_X / 2 + x - 4, y * 2 + y_key - 8, letter );
+    lcdWriteChar ( LCD_MAX_X / 2 + x - 4, y * 2 + y_numbers - 8, letter );
+		
+		GetASCIICode ( 0, letter, '*' );
+    lcdWriteChar ( LCD_MAX_X / 2 - x - 4, LCD_MAX_Y - y_numbers - 8, letter );
+
+    GetASCIICode ( 0, letter, '0' );
+    lcdWriteChar ( LCD_MAX_X / 2 - 4, LCD_MAX_Y - y_numbers - 8, letter );
+
+    GetASCIICode ( 0, letter, '#' );
+    lcdWriteChar ( LCD_MAX_X / 2 + x - 4, LCD_MAX_Y - y_numbers - 8, letter );
 }
