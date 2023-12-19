@@ -2,6 +2,16 @@
 #include "touchscreen_LCD.h"
 #include "UART.h"
 
+static void touchpanelDelayUS(uint32_t cnt) {
+	volatile uint32_t i;
+	for (i = 0; i < cnt; i++) {
+		volatile uint8_t us = 12; /*  */
+		while (us--) /*  */
+		{
+			;
+		}
+	}
+}
 int main ( void )
 {
 	fm24clxx_address_t addr = FM24CLXX_ADDRESS_A000;
