@@ -10,15 +10,7 @@ static void touchpanelDelayUS ( uint32_t cnt )
 	}
 }
 
-void EINT3_init ( void )
-{
-
-}
-
- void EINT3_IRQHandler (void)
-{
-
-}
+    
 
 void lcdTouchscreenGetCoords ( int* x, int* y )
 {
@@ -35,59 +27,52 @@ void lcdTouchscreenGetCoords ( int* x, int* y )
 	}
 }
 
+// zwiekszanie stosu PAMIETAC DEBILE !!! do 0x00000800
 void lcdTouchscreenCallibrate ( void )
 {
-    int x_arr[10*3];
-    int y_arr[10*3];
-		int last_element = 1;
-		for(int i = 0; i<30;i++){
+    int x_arr[30];
+    int y_arr[30];
+		unsigned int i;
+		int* x_ptr = x_arr;
+		int* y_ptr = y_arr;
+		for(i = 0; i<30; ++i){
 			x_arr[i] = -1;
 			y_arr[i] = -1;
 		}
-    static int callibrated = 0;
-    if ( callibrated > 2 )
-    {
-        return;
-    }
     lcdDrawCross ( 20, 20, 10, LCDRed );
-		for(unsigned int i = 0; i < 10; ++i)
+		for(i = 0; i < 10; ++i)
 		{
 			send("Jestem w for 1!\n\r");
-			lcdTouchscreenGetCoords ( &x_arr[i], &y_arr[i] );
+			lcdTouchscreenGetCoords ( x_ptr++, y_ptr++ );
 			send("1 jestem po\n\r");
 			touchpanelDelayUS ( 2000 );
-			if(x_arr[i] < 0 || y_arr[i] <0){
-				i = 0;
-			}
 		}
+		send("czekam po for 1\n\r");
     touchpanelDelayUS ( 2000000 );
 		lcdDrawCross ( 20, 20, 10, LCDBlack );
 		touchpanelDelayUS ( 2000000 );
     lcdDrawCross ( LCD_MAX_X - 20, 20, 10, LCDRed );
-		for(unsigned int i = 10; i < 20; ++i)
+		for(i = 10; i < 20; ++i)
     {
 			send("Jestem w for 2!\n\r");
-			lcdTouchscreenGetCoords ( &x_arr[i], &y_arr[i] );
+			lcdTouchscreenGetCoords ( x_ptr++, y_ptr++ );
 			send("2 jestem po\n\r");
 			touchpanelDelayUS ( 2000 );
-			if(x_arr[i] < 0 || y_arr[i] <0){
-				i = 10;
-			}
 		}
+		send("czekam po for 2\n\r");
 		touchpanelDelayUS ( 2000000 );
     lcdDrawCross ( LCD_MAX_X - 20, 20, 10, LCDBlack );
 		touchpanelDelayUS ( 2000000 );
     lcdDrawCross ( 20, LCD_MAX_Y - 20, 10, LCDRed );
-		for(unsigned int i = 20; i < 30; ++i)
+		for(i = 20; i < 30; ++i)
 		{
 			send("Jestem w for 3!\n\r");
-			lcdTouchscreenGetCoords ( &x_arr[i], &y_arr[i] );
+			lcdTouchscreenGetCoords ( x_ptr++, y_ptr++ );
 			send("3 jestem po\n\r");
 			touchpanelDelayUS ( 2000 );
-			if(x_arr[i] < 0 || y_arr[i] <0){
-				i = 20;
-			}
 		}
+		send("czekam po for 3\n\r");
 		touchpanelDelayUS ( 2000000 );
     lcdDrawCross ( 20, LCD_MAX_Y - 20, 10, LCDBlack );
+		send("Done\r\n");
 }

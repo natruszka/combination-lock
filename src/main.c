@@ -1,9 +1,6 @@
 #include "interface_LCD.h"
 #include "touchscreen_LCD.h"
 #include "UART.h"
-#include <stdio.h>
-#include "fm24clxx.h"
-
 
 int main ( void )
 {
@@ -50,6 +47,7 @@ int main ( void )
 	lcdWriteReg ( ADRX_RAM, 0 );
 	lcdWriteReg ( ADRY_RAM, 0 );
 	lcdWriteIndex ( DATA_RAM );
+	touchpanelDelayUS(40);
 	for ( int register x = 0; x < LCD_MAX_X * LCD_MAX_Y; x++ )
 	{
 		lcdWriteData ( LCDBlueSea );
