@@ -2,16 +2,17 @@
 
 static void touchpanelDelayUS ( uint32_t cnt )
 {
-    volatile uint32_t i;
-    for ( i = 0; i < cnt; i++ )
-    {
-        volatile uint8_t us = 12; /*  */
-        while ( us-- );
-    }
+	volatile uint32_t i;
+	for ( i = 0; i < cnt; i++ )
+	{
+		volatile uint8_t us = 12; /*  */
+		while ( us-- );
+	}
 }
 
 void lcdTouchscreenGetCoords ( int* x, int* y )
 {
+<<<<<<< Updated upstream
 	char temp[10];
     while ( 1 )
     {
@@ -58,4 +59,72 @@ void lcdTouchscreenCallibrate ( void )
 			touchpanelDelayUS ( 2000 );
 		}
     lcdDrawCross ( LCD_MAX_X / 2, LCD_MAX_Y - 20, 10, LCDBlack );
+=======
+	char temp[20];
+	while ( 1 )
+	{
+		if ( !GPIO_PinRead ( 0, 19 ) )
+		{
+			touchpanelGetXY ( x, y );
+			sprintf ( temp, "%d, %d \r\n", *x, *y );
+			send ( temp );
+		}
+	}
+}
+
+void lcdTouchscreenCallibrate ( void )
+{
+	int x_arr[30];
+	int y_arr[30];
+	for ( int i = 0; i < 30;i++ )
+	{
+		x_arr[i] = -1;
+		y_arr[i] = -1;
+	}
+
+	static int callibrated = 0;
+	if ( callibrated > 2 )
+	{
+		return;
+	}
+
+	unsigned int i;
+
+	lcdDrawCross ( 20, 20, 10, LCDRed );
+	for ( i = 0; i < 10; ++i )
+	{
+		lcdTouchscreenGetCoords ( &x_arr[i], &y_arr[i] );
+		touchpanelDelayUS ( 2000 );
+	}
+
+	touchpanelDelayUS ( 2000000 );
+
+	lcdDrawCross ( 20, 20, 10, LCDBlack );
+
+	touchpanelDelayUS ( 2000000 );
+
+	lcdDrawCross ( LCD_MAX_X - 20, 20, 10, LCDRed );
+	for ( i = 10; i < 20; ++i )
+	{
+		lcdTouchscreenGetCoords ( &x_arr[i], &y_arr[i] );
+		touchpanelDelayUS ( 2000 );
+	}
+
+	touchpanelDelayUS ( 2000000 );
+
+	lcdDrawCross ( LCD_MAX_X - 20, 20, 10, LCDBlack );
+	
+	touchpanelDelayUS ( 2000000 );
+	
+	lcdDrawCross ( 20, LCD_MAX_Y - 20, 10, LCDRed );
+	for ( i = 20; i < 30; ++i )
+	{
+		lcdTouchscreenGetCoords ( &x_arr[i], &y_arr[i] );
+		touchpanelDelayUS ( 2000 );
+	}
+
+	touchpanelDelayUS ( 2000000 );
+	
+	lcdDrawCross ( 20, LCD_MAX_Y - 20, 10, LCDBlack );
+>>>>>>> Stashed changes
 }
