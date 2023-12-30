@@ -56,7 +56,11 @@ int main ( void )
 	lcdDrawInterface ();
 	//	lcdTouchscreenCallibrate ();
 
-	send ( "Hello World!" );
+	//	char temp[10];
+	//	sprintf(temp, "%d", LCD_MAX_Y);
+	//	send(temp);
+
+	send("I'm free\r\n");
 	while ( 1 )
 	{
 	}
