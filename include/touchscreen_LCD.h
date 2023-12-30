@@ -10,8 +10,8 @@
 
 void lcdTouchscreenGetCoords ( int* x, int* y );
 void lcdTouchscreenCallibrate ( void );
-int getMin(int *cords);
-int getMax(int *cords);
-int average(int *cords);
-void calculateConstants(int *x, int *y);
+int getMin(int cords[], int len);
+int getMax(int cords[], int len);
+int average(int cords[], int len);
+void calculateConstants(int x[], int y[], int len);
 #endif // LCD_TOUCHSCREEN_H

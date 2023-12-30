@@ -10,6 +10,10 @@ const static uint16_t yFirstRow = LCD_MAX_Y / 3;
 const static uint16_t ySecondRow = LCD_MAX_Y / 2;
 const static uint16_t yThirdRow = 2 * LCD_MAX_Y / 3;
 const static uint16_t yForthRow = 5 * LCD_MAX_Y / 6;
+extern int A;
+extern int B;
+extern int C;
+extern int D;
 
 void lcdWriteChar(uint16_t x_start, uint16_t y_start, unsigned char letter[16])
 {
@@ -159,7 +163,8 @@ void lcdDrawInterface(void)
 void lcdDisplayCode(char letter, bool isBackspace, bool isEnter)
 {
     static int pos;
-    send(&letter);
+		unsigned char buffer[16] = {'\0'};
+		send(&letter);
     if (isBackspace)
     {
         if (pos == 0)
@@ -169,12 +174,11 @@ void lcdDisplayCode(char letter, bool isBackspace, bool isEnter)
         lcdWriteChar(xFirstRow + pos * 8, yFirstRow / 2 - 4, buffer);
         return;
     }
-    unsigned char buffer[16];
     GetASCIICode(0, buffer, '*');
     lcdWriteChar(xFirstRow + pos * 8, yFirstRow / 2 - 4, buffer);
     if (++pos == 4)
     {
-        checkCode();
+        checkCode(" ");
         pos = 0;
     }
 }
@@ -189,7 +193,7 @@ void lcdDisplayInfo(bool isOpen)
 void checkCode(const char *code)
 {
     static int failureCount;
-    if ()
+    //if ()
 }
 
 void lcdDisplayDate(void)

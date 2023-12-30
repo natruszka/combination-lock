@@ -1,9 +1,9 @@
 #include "touchscreen_LCD.h"
 
-static int A;
-static int B;
-static int C;
-static int D;
+int A;
+int B;
+int C;
+int D;
 static bool isConf;
 
 static void touchpanelDelayUS(uint32_t cnt)
@@ -34,10 +34,10 @@ void lcdTouchscreenGetCoords(int *x, int *y)
 		}
 }
 
-int getMin(int *cords)
+int getMin(int cords[], int len)
 {
 	int min = cords[0];
-	for (int i; i < 10; ++i)
+	for (int i; i < len; ++i)
 	{
 		if (cords[i] < min)
 			min = cords[i];
@@ -45,10 +45,10 @@ int getMin(int *cords)
 	return min;
 }
 
-int getMax(int *cords)
+int getMax(int cords[], int len)
 {
 	int max = cords[0];
-	for (int i; i < 10; ++i)
+	for (int i; i < len; ++i)
 	{
 		if (cords[i] > max)
 			max = cords[i];
@@ -56,32 +56,32 @@ int getMax(int *cords)
 	return max;
 }
 
-int average(int *cords)
+int average(int cords[], int len)
 {
-	int maxVal = getMax(cords);
-	int minVal = getMin(cords);
+	int maxVal = getMax(cords, len);
+	int minVal = getMin(cords, len);
 	int sum = 0;
 	for (int i = 0; i < 10; ++i)
 	{
-		if (cords[i] == minVal || coords[i] == maxVal)
+		if (cords[i] == minVal || cords[i] == maxVal)
 			continue;
-		sum += cords[i]
+		sum += cords[i];
 	}
 	return sum / 8;
 }
 
-void calculateConstants(int *x, int *y)
+void calculateConstants(int x[], int y[], int len)
 {
-	int x1 = average(x);
-	int x2 = average(x + 10);
-	int x3 = average(x + 20);
+	int x1 = average(x, len/3);
+	int x2 = average(x + len / 3, len/3);
+	int x3 = average(x + 2 * len / 3, len/3);
 
-	int y1 = average(y);
-	int y2 = average(y + 10);
-	int y3 = average(y + 20);
+	int y1 = average(y, len/3);
+	int y2 = average(y + len / 3, len/3);
+	int y3 = average(y + 2 * len / 3, len/3);
 
 	int x1subx3 = x1 - x3;
-	int y3suby1 = y3 y1;
+	int y3suby1 = y3 - y1;
 	int Bdivider = x2 * y3suby1 / x1subx3 + y2;
 	B = 220 / Bdivider;
 	A = B * y3suby1 / x1subx3;
@@ -144,5 +144,7 @@ void lcdTouchscreenCallibrate(void)
 	touchpanelDelayUS(2000000);
 	lcdDrawCross(20, LCD_MAX_Y - 20, 10, LCDBlack);
 	send("Done\r\n");
+	touchpanelDelayUS(2000);
 	lcdClearScreen();
+	calculateConstants(x_arr, y_arr, 30);
 }
