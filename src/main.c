@@ -28,20 +28,15 @@ int main ( void )
 	{
 		lcdWriteData ( LCDBlueSea );
 	}
-	//lcdDrawConfigTouchpanel ();
-	//lcdDrawInterface ();
-//	lcdTouchscreenCallibrate ();
+	// lcdDrawConfigTouchpanel ();
+	// lcdTouchscreenCallibrate ();
+	lcdDrawInterface ();
 
 	//	char temp[10];
 	//	sprintf(temp, "%d", LCD_MAX_Y);
 	//	send(temp);
 
 	send("I'm free\r\n");
-	char imie[20];
-	sprintf(imie, "%d", LCD_MAX_X);
-	send(imie);
-	sprintf(imie, "%d", LCD_MAX_Y);
-	send(imie);
 	while ( 1 )
 	{
 	}
