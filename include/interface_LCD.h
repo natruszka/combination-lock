@@ -19,4 +19,5 @@ void lcdDisplayInfo(bool isOpen);
 void checkCode(const char *code);
 void lcdDisplayDate(void);
 void lcdHandler(int x, int y);
+void lcdTest(void);
 #endif // INTERFACE_LCD_H
