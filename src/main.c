@@ -64,7 +64,7 @@ int main ( void )
 	}
 	lcdDrawConfigTouchpanel ();
 	lcdDrawInterface ();
-	//	lcdTouchscreenCallibrate ();
+	lcdTest();
 
 	//	char temp[10];
 	//	sprintf(temp, "%d", LCD_MAX_Y);
