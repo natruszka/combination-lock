@@ -1,6 +1,7 @@
 #include "interface_LCD.h"
 #include "asciiLib.h"
 #include <stdbool.h>
+#include <stdbool.h>
 #include <string.h>
 #include <stdlib.h>
 
@@ -158,6 +159,113 @@ void lcdDrawInterface(void)
     lcdWriteChar(LCD_MAX_X / 2 + xFirstRow - 4, LCD_MAX_Y - y_numbers - 8, letter);
     lcdDisplayDate();
     lcdDisplayInfo(false);
+}
+
+void lcdDisplayCode(char letter, bool isBackspace, bool isEnter)
+{
+    static int pos;
+    send(&letter);
+    if (isBackspace)
+    {
+        if (pos == 0)
+            return;
+        pos--;
+        GetASCIICode(0, buffer, ' ');
+        lcdWriteChar(xFirstRow + pos * 8, yFirstRow / 2 - 4, buffer);
+        return;
+    }
+    unsigned char buffer[16];
+    GetASCIICode(0, buffer, '*');
+    lcdWriteChar(xFirstRow + pos * 8, yFirstRow / 2 - 4, buffer);
+    if (++pos == 4)
+    {
+        checkCode();
+        pos = 0;
+    }
+}
+void lcdDisplayInfo(bool isOpen)
+{
+    if (isOpen)
+        lcdWriteString("OPEN  ", xFirstRow, 8);
+    else
+        lcdWriteString("CLOSED", xFirstRow, 8);
+}
+
+void checkCode(const char *code)
+{
+    static int failureCount;
+    if ()
+}
+
+void lcdDisplayDate(void)
+{
+    lcdWriteString("date", 0, 8); // test pozycji
+}
+
+void lcdHandler(int x, int y)
+{
+    x = x * A + y * B;
+    y = x * C + y * D;
+    if (y > yFirstRow)
+    {
+        if (x < xFirstRow)
+        {
+            if (y < ySecondRow)
+            {
+                lcdDisplayCode('1', false, false);
+            }
+            else if (y < yThirdRow)
+            {
+                lcdDisplayCode('4', false, false);
+            }
+            else if (y < yForthRow)
+            {
+                lcdDisplayCode('7', false, false);
+            }
+            else
+            {
+                lcdDisplayCode(' ', true, false);
+            }
+        }
+        else if (x < xSecondRow)
+        {
+            if (y < ySecondRow)
+            {
+                lcdDisplayCode('2', false, false);
+            }
+            else if (y < yThirdRow)
+            {
+                lcdDisplayCode('5', false, false);
+            }
+            else if (y < yForthRow)
+            {
+                lcdDisplayCode('8', false, false);
+            }
+            else
+            {
+                lcdDisplayCode('0', false, false);
+            }
+        }
+        else
+        {
+            if (y < ySecondRow)
+            {
+                lcdDisplayCode('3', false, false);
+            }
+            else if (y < yThirdRow)
+            {
+                lcdDisplayCode('6', false, false);
+            }
+            else if (y < yForthRow)
+            {
+                lcdDisplayCode('9', false, false);
+            }
+            else
+            {
+                lcdDisplayCode(' ', false, true);
+            }
+        }
+    }
 }
 
 void lcdDisplayCode(char letter, bool isBackspace, bool isEnter)
