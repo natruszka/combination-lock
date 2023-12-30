@@ -23,18 +23,18 @@
 #include <stdlib.h>
 
 #ifdef LCD_SDD1289
-   #include "LCD_SDD1289.h"
+#include "LCD_SDD1289.h"
 #elif  LCD_ILI9325
-   #include "LCD_ILI9325.h"
+#include "LCD_ILI9325.h"
 #else
-   #define ADRX_RAM 0x00
-   #define ADRY_RAM 0x01
-   #define LCD_MAX_X  20
-   #define LCD_MAX_Y  20
+#define ADRX_RAM 0x00
+#define ADRY_RAM 0x01
+#define LCD_MAX_X  20
+#define LCD_MAX_Y  20
 #endif
 
 //Header needed because of inline function definition
-void wait_delay(int count);
+void wait_delay ( int count );
 
 /*******************************************************************************
 * Function Name  : Lcd_Configuration
@@ -44,7 +44,7 @@ void wait_delay(int count);
 * Return         : None
 * Attention      : None
 *******************************************************************************/
-void lcdConfiguration(void)
+void lcdConfiguration ( void )
 {
    /* Configure the LCD Control pins
        set
@@ -67,15 +67,15 @@ void lcdConfiguration(void)
 * Return         : None
 * Attention       : None
 *******************************************************************************/
-void lcdSend (uint16_t byte)
+void lcdSend ( uint16_t byte )
 {
    LPC_GPIO2->FIODIR |= 0xFF;        /* P2.0...P2.7 Output */
-   LCD_DIR(1)                        /* Interface A->B */
-   LCD_EN(0)                         /* Enable 2A->2B */
-   LPC_GPIO2->FIOPIN =  byte;        /* Write D0..D7 */
-   LCD_LE(1)
-   LCD_LE(0)                         /* latch D0..D7   */
-   LPC_GPIO2->FIOPIN =  byte >> 8;   /* Write D8..D15 */
+   LCD_DIR ( 1 )                        /* Interface A->B */
+      LCD_EN ( 0 )                         /* Enable 2A->2B */
+      LPC_GPIO2->FIOPIN = byte;        /* Write D0..D7 */
+   LCD_LE ( 1 )
+      LCD_LE ( 0 )                         /* latch D0..D7   */
+      LPC_GPIO2->FIOPIN = byte >> 8;   /* Write D8..D15 */
 }
 
 /*******************************************************************************
@@ -87,10 +87,10 @@ void lcdSend (uint16_t byte)
 * Return         : None
 * Attention       : None
 *******************************************************************************/
-__INLINE void wait_delay(int count)
+__INLINE void wait_delay ( int count )
 {
-   volatile unsigned int tmp = count;
-   while(tmp--);
+   volatile unsigned int tmp = ( unsigned int ) count;
+   while ( tmp-- );
 }
 
 /*******************************************************************************
@@ -100,21 +100,21 @@ __INLINE void wait_delay(int count)
 * Output         : None
 * Attention       : None
 *******************************************************************************/
-uint16_t lcdRead (void)
+uint16_t lcdRead ( void )
 {
    uint16_t valLSB, valMSB;
 
-   LPC_GPIO2->FIODIR &= ~(0xFF);         /* P2.0...P2.7 Input */
-   LCD_DIR(0)                           /* Interface B->A */
-   LCD_EN(0)                            /* Enable 2B->2A */
-   wait_delay(50);                       /* delay some times */
+   LPC_GPIO2->FIODIR &= ~( unsigned int ) ( 0xFF );         /* P2.0...P2.7 Input */
+   LCD_DIR ( 0 )                           /* Interface B->A */
+      LCD_EN ( 0 )                            /* Enable 2B->2A */
+      wait_delay ( 50 );                       /* delay some times */
    valMSB = LPC_GPIO2->FIOPIN0;          /* Read D8..D15 */
-   LCD_EN(1)                            /* Enable 1B->1A */
-   wait_delay(50);                       /* delay some times */
+   LCD_EN ( 1 )                            /* Enable 1B->1A */
+      wait_delay ( 50 );                       /* delay some times */
    //value = (value << 8) |
    valLSB = LPC_GPIO2->FIOPIN0;          /* Read D0..D7 */
-   LCD_DIR(1)
-   return  (valMSB << 8 | valLSB);
+   LCD_DIR ( 1 )
+      return  ( uint16_t ) ( valMSB << ( uint16_t ) ( 8 | valLSB ) );
 }
 
 /*******************************************************************************
@@ -123,7 +123,7 @@ uint16_t lcdRead (void)
 * Return         : None
 * Attention       : None
 *******************************************************************************/
-void lcdWriteIndex(uint16_t index)
+void lcdWriteIndex ( uint16_t index )
 {
    /**********************************
    // ** nCS      ---\________/------*
@@ -132,15 +132,15 @@ void lcdWriteIndex(uint16_t index)
    // ** nWR      -----\___/---------*
    // ** DB[0-15] ------[###]--------*
    **********************************/
-   LCD_CS(0)
-   LCD_RS(0)
-   LCD_RD(1)
-   lcdSend( index );
-   wait_delay(50);
-   LCD_WR(0)
-   wait_delay(1);
-   LCD_WR(1)
-   LCD_CS(1)
+   LCD_CS ( 0 )
+      LCD_RS ( 0 )
+      LCD_RD ( 1 )
+      lcdSend ( index );
+   wait_delay ( 50 );
+   LCD_WR ( 0 )
+      wait_delay ( 1 );
+   LCD_WR ( 1 )
+      LCD_CS ( 1 )
 }
 
 /*******************************************************************************
@@ -149,7 +149,7 @@ void lcdWriteIndex(uint16_t index)
 * Return         : None
 * Attention       : None
 *******************************************************************************/
-void lcdWriteData(uint16_t data)
+void lcdWriteData ( uint16_t data )
 {
    /**********************************
    // ** nCS      ---\________/-----**
@@ -158,13 +158,13 @@ void lcdWriteData(uint16_t data)
    // ** nWR      -----\___/--------**
    // ** DB[0-15] ------[###]-------**
    **********************************/
-   LCD_CS(0)
-   LCD_RS(1)
-   lcdSend( data );
-   LCD_WR(0)
-   wait_delay(1);
-   LCD_WR(1)
-   LCD_CS(1)
+   LCD_CS ( 0 )
+      LCD_RS ( 1 )
+      lcdSend ( data );
+   LCD_WR ( 0 )
+      wait_delay ( 1 );
+   LCD_WR ( 1 )
+      LCD_CS ( 1 )
 }
 
 /*******************************************************************************
@@ -173,7 +173,7 @@ void lcdWriteData(uint16_t data)
 * Output         : None
 * Attention       : None
 *******************************************************************************/
-uint16_t lcdReadData(void)
+uint16_t lcdReadData ( void )
 {
    /**********************************
    // ** nCS      ---\________/-----**
@@ -184,17 +184,17 @@ uint16_t lcdReadData(void)
    **********************************/
    uint16_t value;
 
-   LCD_CS(0);
-   LCD_RS(1);
-   LCD_WR(1);
-   LCD_RD(0);
-   wait_delay(1);
-   value = lcdRead();
+   LCD_CS ( 0 )
+      LCD_RS ( 1 )
+      LCD_WR ( 1 )
+      LCD_RD ( 0 )
+      wait_delay ( 1 );
+   value = lcdRead ();
 
-   LCD_RD(1);
-   LCD_CS(1);
+   LCD_RD ( 1 )
+      LCD_CS ( 1 )
 
-   return value;
+      return value;
 }
 
 /*******************************************************************************
@@ -206,12 +206,12 @@ uint16_t lcdReadData(void)
 * Return         : None
 * Attention       : None
 *******************************************************************************/
-void lcdWriteReg(uint16_t LCD_Reg,uint16_t LCD_RegValue)
+void lcdWriteReg ( uint16_t LCD_Reg, uint16_t LCD_RegValue )
 {
    /* Write 16-bit Index, then Write Reg */
-   lcdWriteIndex(LCD_Reg);
+   lcdWriteIndex ( LCD_Reg );
    /* Write 16-bit Reg */
-   lcdWriteData(LCD_RegValue);
+   lcdWriteData ( LCD_RegValue );
 }
 
 /*******************************************************************************
@@ -222,14 +222,14 @@ void lcdWriteReg(uint16_t LCD_Reg,uint16_t LCD_RegValue)
 * Return         : LCD Register Value.
 * Attention       : None
 *******************************************************************************/
-uint16_t lcdReadReg(uint16_t LCD_Reg)
+uint16_t lcdReadReg ( uint16_t LCD_Reg )
 {
    uint16_t LCD_RAM;
 
    /* Write 16-bit Index (then Read Reg) */
-   lcdWriteIndex(LCD_Reg);
+   lcdWriteIndex ( LCD_Reg );
    /* Read 16-bit Reg */
-   LCD_RAM = lcdReadData();
+   LCD_RAM = lcdReadData ();
    return LCD_RAM;
 }
 
@@ -242,22 +242,22 @@ uint16_t lcdReadReg(uint16_t LCD_Reg)
 * Return         : None
 * Attention       : None
 *******************************************************************************/
-void lcdSetCursor(uint16_t Xpos, uint16_t Ypos)
+void lcdSetCursor ( uint16_t Xpos, uint16_t Ypos )
 {
-    #if  ( DISP_ORIENTATION == 90 ) || ( DISP_ORIENTATION == 270 )
+#if  ( DISP_ORIENTATION == 90 ) || ( DISP_ORIENTATION == 270 )
 
-    uint16_t temp = Xpos;
+   uint16_t temp = Xpos;
 
    Xpos = Ypos;
    Ypos = ( LCD_MAX_X - 1 ) - temp;
 
-   #elif  ( DISP_ORIENTATION == 0 ) || ( DISP_ORIENTATION == 180 )
+#elif  ( DISP_ORIENTATION == 0 ) || ( DISP_ORIENTATION == 180 )
 
-   #endif
+#endif
 
 
-   lcdWriteReg(ADRX_RAM, Xpos );
-   lcdWriteReg(ADRY_RAM, Ypos );
+   lcdWriteReg ( ADRX_RAM, Xpos );
+   lcdWriteReg ( ADRY_RAM, Ypos );
 }
 
 /*********************************************************************************************************

@@ -1,4 +1,4 @@
-#include "lpc17xx.h"
+#include "LPC17xx.h"
 #include <stdio.h>
 
 #define   CHX            0x90
@@ -35,19 +35,19 @@
 /*****************************
  *  Touch panel communication config
  */
-void touchpanelInit(void);
+void touchpanelInit ( void );
 
 
 /*****************************
  *  Single coordinate functions
  *  (do NOT use both without delay)
  */
-int touchpanelReadX(void);
-int touchpanelReadY(void);
+int touchpanelReadX ( void );
+int touchpanelReadY ( void );
 
 
 /*****************************
  *  Double coordinates function
  */
-void touchpanelGetXY(int *x, int *y);
+void touchpanelGetXY ( int* x, int* y );
 

@@ -4,7 +4,7 @@
 **
 **--------------File Info-------------------------------------------------------------------------------
 ** File name:         AsciiLib.c
-** Descriptions:      ASCII×Ö¿â  ºáÏòÈ¡Ä£  8*16  ×¨Îª²ÊÆÁÏÔÊ¾Éè¼Æ
+** Descriptions:      ASCII Characters 8x16  bit
 **
 **------------------------------------------------------------------------------------------------------
 ** Created by:        AVRman
@@ -24,7 +24,7 @@
 
 
 //#ifdef ASCII_8X16_MS_Gothic
-static unsigned char const AsciiLib[2][95][16] = {{
+static unsigned char const AsciiLib[2][95][16] = { {
 
 {0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00},/*" ",0*/
 
@@ -413,7 +413,7 @@ static unsigned char const AsciiLib[2][95][16] = {{
 {0x00,0x00,0x00,0x30,0x18,0x18,0x18,0x0C,0x06,0x0C,0x18,0x18,0x18,0x30,0x00,0x00},/*"}",93*/
 
 {0x00,0x00,0x00,0x71,0xDB,0x8E,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00},/*"~",94*/
-}};
+} };
 
 //#endif
 
@@ -422,13 +422,13 @@ static unsigned char const AsciiLib[2][95][16] = {{
 * Function Name  : GetASCIICode
 * Description    :
 * Input          : - ASCII:
-* Output         : - *pBuffer: ´
+* Output         : - *pBuffer:
 * Return         : None
 * Attention       : None
 *******************************************************************************/
-void GetASCIICode(int font, unsigned char* pBuffer, unsigned char ASCII)
+void GetASCIICode ( int font, unsigned char* pBuffer, unsigned char ASCII )
 {
-   memcpy(pBuffer, AsciiLib[font][(ASCII - 32)], 16);
+      memcpy ( pBuffer, AsciiLib[font][( ASCII - 32 )], 16 );
 }
 
 

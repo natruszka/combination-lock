@@ -3,13 +3,6 @@
 #include <string.h>
 #include <stdlib.h>
 
-static double A;
-static double B;
-static double C;
-static double D;
-static double E;
-static double F;
-
 void lcdWriteChar ( uint16_t x_start, uint16_t y_start, unsigned char letter[16] )
 {
     lcdWriteReg ( ADRX_RAM, x_start );
@@ -45,18 +38,22 @@ void lcdWriteString ( const char* text )
 void lcdDrawLine ( uint16_t x0, uint16_t y0,
                    uint16_t x1, uint16_t y1, uint16_t color )
 {
+    int dx, sx;
+    int dy, sy;
+    int err, e2;
+
     if ( x1 >= LCD_MAX_X || x0 >= LCD_MAX_X ||
          y1 >= LCD_MAX_Y || y0 >= LCD_MAX_Y )
     {
         return;
     }
-    int dx = abs( x1 - x0 );
-	  int sx = x0 < x1 ? 1 : -1;
-    int dy = -abs( y1 - y0 );
-		int sy = y0 < y1 ? 1 : -1;
-    int err = dx + dy, e2; /* error value e_xy */
+    dx = abs ( x1 - x0 );
+    sx = x0 < x1 ? 1 : -1;
+    dy = -abs ( y1 - y0 );
+    sy = y0 < y1 ? 1 : -1;
+    err = dx + dy; /* error value e_xy */
 
-    for ( ;;)
+    for ( ;; )
     {  /* loop */
         lcdWriteReg ( ADRX_RAM, x0 );
         lcdWriteReg ( ADRY_RAM, y0 );
@@ -94,14 +91,13 @@ void lcdDrawInterface ( void )
     uint16_t x = LCD_MAX_X / 3;
     uint16_t y = LCD_MAX_Y / 3;
     uint16_t y_key = y / 3 * 2;
+    unsigned char letter[16];
 
     lcdDrawLine ( 0, y, LCD_MAX_X - 1, y, LCDBlack );
     lcdDrawLine ( 0, y + y_key, LCD_MAX_X - 1, y + y_key, LCDBlack );
     lcdDrawLine ( 0, y + y_key * 2, LCD_MAX_X - 1, y + y_key * 2, LCDBlack );
     lcdDrawLine ( x, y, x, LCD_MAX_Y - 1, LCDBlack );
     lcdDrawLine ( x + x, y, x + x, LCD_MAX_Y - 1, LCDBlack );
-
-    unsigned char letter[16];
 
     GetASCIICode ( 0, letter, '1' );
     lcdWriteChar ( LCD_MAX_X / 2 - x - 4, y * 2 - y_key - 8, letter );

@@ -30,7 +30,7 @@
 #define  ASCII_8X16_System      1
 
 /* Private function prototypes -----------------------------------------------*/
-void GetASCIICode(int font, unsigned char* pBuffer,unsigned char ASCII);
+void GetASCIICode ( int font, unsigned char* pBuffer, unsigned char ASCII );
 
 #endif
 

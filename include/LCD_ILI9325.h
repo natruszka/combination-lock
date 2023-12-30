@@ -7,7 +7,7 @@
 #define __LCD_SYMBOLS_INH
 
 
-//#define OSCIL_ON 0x0000      //Oscillator -- moved to Open1786.h
+ //#define OSCIL_ON 0x0000      //Oscillator -- moved to Open1786.h
 #define ENTRYM   0x0003    //Entry Mode
 #define HADRPOS_RAM_START 0x0050    //Horizontal RAM address position
 #define HADRPOS_RAM_END   0x0051  //Horizontal RAM address position
@@ -24,35 +24,35 @@
 
 #if  ( DISP_ORIENTATION == 90 ) || ( DISP_ORIENTATION == 270 )
 
-/**
- * Screen width
- */
+ /**
+  * Screen width
+  */
 #define  LCD_MAX_X  320
-/**
- * Screen height
- */
+  /**
+   * Screen height
+   */
 #define  LCD_MAX_Y  240
 
 #elif  ( DISP_ORIENTATION == 0 ) || ( DISP_ORIENTATION == 180 )
 
-/**
- * Screen width
- */
+ /**
+  * Screen width
+  */
 #define  LCD_MAX_X  240
-/**
- * Screen height
- */
+  /**
+   * Screen height
+   */
 #define  LCD_MAX_Y  320
 
 #endif
 
 
-/**
- * \defgroup LCDColors Predefined colors for the LCD
- *
- * Colors in rgb565 format defined as 16-bit unsigned numbers ready to use by the programmer
- * @{
- */
+   /**
+    * \defgroup LCDColors Predefined colors for the LCD
+    *
+    * Colors in rgb565 format defined as 16-bit unsigned numbers ready to use by the programmer
+    * @{
+    */
 #define LCDWhite           0xFFFF
 #define LCDBlack           0x0000
 #define LCDGrey            0xa534
@@ -66,18 +66,18 @@
 #define LCDGreen           0x07E0
 #define LCDCyan            0x7FFF
 #define LCDYellow          0xFFE0
-/**
- * @}
- */
+    /**
+     * @}
+     */
 #endif
 
 #ifndef __LCD_ILI9325_H
 #define __LCD_ILI9325_H
 
-/*****************************
- *  LCD controler configuration
- */
-void init_ILI9325(void);
+     /*****************************
+      *  LCD controler configuration
+      */
+void init_ILI9325 ( void );
 
 #endif
 

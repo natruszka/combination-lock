@@ -9,19 +9,19 @@
 
 #include "LPC17xx.h"
 
-/* 8bit to 16bit LCD Interface
+ /* 8bit to 16bit LCD Interface
 
-   PINS:
-   - EN      = P1.25
-   - DIR     = P1.24
-   - LE      = P1.23
-   - WR      = P0.23
-   - CS      = P0.22
-   - RD      = P0.21
-   - RS      = P0.20
-   - DB[0.7] = P2.0...P2.7
-   - DB[8.15]= P2.0...P2.7
-*/
+    PINS:
+    - EN      = P1.25
+    - DIR     = P1.24
+    - LE      = P1.23
+    - WR      = P0.23
+    - CS      = P0.22
+    - RD      = P0.21
+    - RS      = P0.20
+    - DB[0.7] = P2.0...P2.7
+    - DB[8.15]= P2.0...P2.7
+ */
 
 #define PIN_EN   (1 << 25)
 #define PIN_DIR  (1 << 24)
@@ -32,7 +32,7 @@
 #define PIN_RD   (1 << 21)
 #define PIN_RS   (1 << 20)
 
-/* Pin EN setting to 0 or 1                                                   */
+ /* Pin EN setting to 0 or 1                                                   */
 #define LCD_EN(x)   ((x) ? (LPC_GPIO1->FIOSET = PIN_EN) : (LPC_GPIO1->FIOCLR = PIN_EN));
 /* Pin DIR setting to 0 or 1                                                   */
 #define LCD_DIR(x)  ((x) ? (LPC_GPIO1->FIOSET = PIN_DIR) : (LPC_GPIO1->FIOCLR = PIN_DIR));
@@ -72,31 +72,31 @@
 /*****************************
  *  LCD control lines config
  */
-void lcdConfiguration(void);
+void lcdConfiguration ( void );
 
 
 /*****************************
  *   Low level procedures
  */
-void lcdSend (uint16_t byte);
-uint16_t lcdRead (void);
+void lcdSend ( uint16_t byte );
+uint16_t lcdRead ( void );
 
 
 /*****************************
  *   Mid-level
  *   comunication procedures
  */
-void lcdWriteIndex(uint16_t index);
-void lcdWriteData(uint16_t index);
-uint16_t lcdReadData(void);
+void lcdWriteIndex ( uint16_t index );
+void lcdWriteData ( uint16_t index );
+uint16_t lcdReadData ( void );
 
 
 /*****************************
  *   High level (compound)
  *   comunication procedures
  */
-void lcdWriteReg(uint16_t LCD_Reg,uint16_t LCD_RegValue);
-uint16_t lcdReadReg(uint16_t LCD_Reg);
-void lcdSetCursor(uint16_t Xpos, uint16_t Ypos);
+void lcdWriteReg ( uint16_t LCD_Reg, uint16_t LCD_RegValue );
+uint16_t lcdReadReg ( uint16_t LCD_Reg );
+void lcdSetCursor ( uint16_t Xpos, uint16_t Ypos );
 
 #endif

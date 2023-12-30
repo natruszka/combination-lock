@@ -5,7 +5,6 @@
 int main ( void )
 {
 	UART_init ();
-	//	EINT3_init();
 	touchpanelInit ();
 	send ( "START\r\n" );
 	lcdConfiguration ();
@@ -19,14 +18,11 @@ int main ( void )
 	}
 	lcdDrawConfigTouchpanel ();
 	lcdDrawInterface ();
-	lcdTouchscreenCallibrate ();
-
-	//	char temp[10];
-	//	sprintf(temp, "%d", LCD_MAX_Y);
-	//	send(temp);
+//	lcdTouchscreenCallibrate ();
+	
+	send("Hello World!\n\r");
 
 	while ( 1 )
 	{
-
 	}
 }
