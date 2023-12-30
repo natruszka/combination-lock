@@ -164,7 +164,8 @@ void lcdDrawInterface(void)
 void lcdDisplayCode(char letter, bool isBackspace, bool isEnter)
 {
     static int pos;
-    send(&letter);
+		unsigned char buffer[16] = {'\0'};
+		send(&letter);
     if (isBackspace)
     {
         if (pos == 0)
@@ -174,12 +175,11 @@ void lcdDisplayCode(char letter, bool isBackspace, bool isEnter)
         lcdWriteChar(xFirstRow + pos * 8, yFirstRow / 2 - 4, buffer);
         return;
     }
-    unsigned char buffer[16];
     GetASCIICode(0, buffer, '*');
     lcdWriteChar(xFirstRow + pos * 8, yFirstRow / 2 - 4, buffer);
     if (++pos == 4)
     {
-        checkCode();
+        checkCode(" ");
         pos = 0;
     }
 }
@@ -194,7 +194,7 @@ void lcdDisplayInfo(bool isOpen)
 void checkCode(const char *code)
 {
     static int failureCount;
-    if ()
+    //if ()
 }
 
 void lcdDisplayDate(void)
