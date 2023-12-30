@@ -268,7 +268,7 @@ void lcdHandler(int x, int y)
 }
 void lcdTest(void)
 {
-    lcdWriteString("date", 0, yFirstRow - 8); // test pozycji
-    lcdWriteString("date", xSecondRow, yFirstRow - 8); // test pozycji
+    lcdWriteString("date", 0, yFirstRow - 16); // test pozycji
+    lcdWriteString("date", xSecondRow, yFirstRow - 16); // test pozycji
     lcdWriteString("KODD", xFirstRow,  yFirstRow / 2 - 4);
 }
