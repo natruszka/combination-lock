@@ -10,7 +10,8 @@
       <TargetName>Target 1</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
-      <pCCUsed>6110000::V6.11::.\ARMCLANG</pCCUsed>
+      <pArmCC>6210000::V6.21::ARMCLANG</pArmCC>
+      <pCCUsed>6210000::V6.21::ARMCLANG</pCCUsed>
       <uAC6>1</uAC6>
       <TargetOption>
         <TargetCommonOption>
@@ -185,6 +186,8 @@
             <uocXRam>0</uocXRam>
             <RvdsVP>0</RvdsVP>
             <RvdsMve>0</RvdsMve>
+            <RvdsCdeCp>0</RvdsCdeCp>
+            <nBranchProt>0</nBranchProt>
             <hadIRAM2>1</hadIRAM2>
             <hadIROM2>0</hadIROM2>
             <StupSel>8</StupSel>
@@ -312,7 +315,7 @@
           </ArmAdsMisc>
           <Cads>
             <interw>1</interw>
-            <Optim>7</Optim>
+            <Optim>4</Optim>
             <oTime>0</oTime>
             <SplitLS>0</SplitLS>
             <OneElfS>1</OneElfS>
@@ -351,7 +354,7 @@
             <NoWarn>0</NoWarn>
             <uSurpInc>0</uSurpInc>
             <useXO>0</useXO>
-            <uClangAs>0</uClangAs>
+            <ClangAsOpt>4</ClangAsOpt>
             <VariousControls>
               <MiscControls></MiscControls>
               <Define></Define>
@@ -422,41 +425,6 @@
               <FileType>1</FileType>
               <FilePath>.\src\UART.c</FilePath>
             </File>
-            <File>
-              <FileName>asciiLib.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\include\asciiLib.h</FilePath>
-            </File>
-            <File>
-              <FileName>interface_LCD.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\include\interface_LCD.h</FilePath>
-            </File>
-            <File>
-              <FileName>LCD_ILI9325.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\include\LCD_ILI9325.h</FilePath>
-            </File>
-            <File>
-              <FileName>Open1768_LCD.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\include\Open1768_LCD.h</FilePath>
-            </File>
-            <File>
-              <FileName>touchscreen_LCD.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\include\touchscreen_LCD.h</FilePath>
-            </File>
-            <File>
-              <FileName>TP_Open1768.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\include\TP_Open1768.h</FilePath>
-            </File>
-            <File>
-              <FileName>UART.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\include\UART.h</FilePath>
-            </File>
           </Files>
         </Group>
         <Group>
@@ -472,8 +440,8 @@
   <RTE>
     <apis/>
     <components>
-      <component Cclass="CMSIS" Cgroup="CORE" Cvendor="ARM" Cversion="5.2.0" condition="ARMv6_7_8-M Device">
-        <package name="CMSIS" schemaVersion="1.3" url="http://www.keil.com/pack/" vendor="ARM" version="5.5.1"/>
+      <component Cclass="CMSIS" Cgroup="CORE" Cvendor="ARM" Cversion="5.6.0" condition="ARMv6_7_8-M Device">
+        <package name="CMSIS" schemaVersion="1.7.7" url="http://www.keil.com/pack/" vendor="ARM" version="5.9.0"/>
         <targetInfos>
           <targetInfo name="Target 1"/>
         </targetInfos>
@@ -524,5 +492,14 @@
       </file>
     </files>
   </RTE>
+
+  <LayerInfo>
+    <Layers>
+      <Layer>
+        <LayName>projekt</LayName>
+        <LayPrjMark>1</LayPrjMark>
+      </Layer>
+    </Layers>
+  </LayerInfo>
 
 </Project>
