@@ -424,6 +424,21 @@
               <FileType>1</FileType>
               <FilePath>.\src\UART.c</FilePath>
             </File>
+            <File>
+              <FileName>i2c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\i2c.c</FilePath>
+            </File>
+            <File>
+              <FileName>driver_fm24clxx.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\driver_fm24clxx.c</FilePath>
+            </File>
+            <File>
+              <FileName>lpc1768_driver_fm24clxx_interface.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\lpc1768_driver_fm24clxx_interface.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

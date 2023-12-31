@@ -1,12 +1,18 @@
 #include "interface_LCD.h"
 #include "touchscreen_LCD.h"
 #include "UART.h"
+#include "I2C_LPC17xx.h"
+#include <stdio.h>
+#include "driver_fm24clxx.h"
+
 
 int main ( void )
 {
 	UART_init ();
+	
+	send("FRAM initialized\r\n");
+	
 	touchpanelInit ();
-	send ( "START\r\n" );
 	lcdConfiguration ();
 	init_ILI9325 ();
 	lcdWriteReg ( ADRX_RAM, 0 );
@@ -21,7 +27,6 @@ int main ( void )
 //	lcdTouchscreenCallibrate ();
 	
 	send("Hello World!\n\r");
-
 	while ( 1 )
 	{
 	}
