@@ -64,7 +64,7 @@ int main ( void )
 	}
 	lcdDrawConfigTouchpanel ();
 	lcdDrawInterface ();
-	lcdTest();
+	// lcdTest();
 
 	//	char temp[10];
 	//	sprintf(temp, "%d", LCD_MAX_Y);
@@ -73,5 +73,7 @@ int main ( void )
 	send("I'm free\r\n");
 	while ( 1 )
 	{
+		int *x, *y;
+		lcdTouchscreenGetCoords(x, y);
 	}
 }
