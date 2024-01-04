@@ -1,4 +1,5 @@
 #include "UART.h"
+#include "string.h"
 
 void send ( const char* str )
 {
@@ -10,6 +11,10 @@ void send ( const char* str )
             LPC_UART0->THR = str[i++];
         }
     }
+    while( ( LPC_UART0->LSR & ( 1 << 5 ) ) ) {}
+    LPC_UART0->THR = '\n';
+    while( ( LPC_UART0->LSR & ( 1 << 5 ) ) ) {}
+	LPC_UART0->THR = '\r';
 }
 
 void UART_init ( void )

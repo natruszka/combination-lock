@@ -1,6 +1,6 @@
 /**
  * Copyright (c) 2015 - present LibDriver All rights reserved
- * 
+ *
  * The MIT License (MIT)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -19,7 +19,7 @@
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE. 
+ * SOFTWARE.
  *
  * @file      driver_fm24clxx_interface.h
  * @brief     driver fm24clxx interface header file
@@ -40,103 +40,103 @@
 #include "driver_fm24clxx.h"
 
 #ifdef __cplusplus
-extern "C"{
+extern "C" {
 #endif
 
-/**
- * @defgroup fm24clxx_interface_driver fm24clxx interface driver function
- * @brief    fm24clxx interface driver modules
- * @ingroup  fm24clxx_driver
- * @{
- */
+    /**
+     * @defgroup fm24clxx_interface_driver fm24clxx interface driver function
+     * @brief    fm24clxx interface driver modules
+     * @ingroup  fm24clxx_driver
+     * @{
+     */
 
-/**
- * @brief  interface iic bus init
- * @return status code
- *         - 0 success
- *         - 1 iic init failed
- * @note   none
- */
-uint8_t fm24clxx_interface_iic_init(void);
+     /**
+      * @brief  interface iic bus init
+      * @return status code
+      *         - 0 success
+      *         - 1 iic init failed
+      * @note   none
+      */
+    uint8_t fm24clxx_interface_iic_init ( void );
 
-/**
- * @brief  interface iic bus deinit
- * @return status code
- *         - 0 success
- *         - 1 iic deinit failed
- * @note   none
- */
-uint8_t fm24clxx_interface_iic_deinit(void);
+    /**
+     * @brief  interface iic bus deinit
+     * @return status code
+     *         - 0 success
+     *         - 1 iic deinit failed
+     * @note   none
+     */
+    uint8_t fm24clxx_interface_iic_deinit ( void );
 
-/**
- * @brief      interface iic bus read
- * @param[in]  addr is the iic device write address
- * @param[in]  reg is the iic register address
- * @param[out] *buf points to a data buffer
- * @param[in]  len is the length of the data buffer
- * @return     status code
- *             - 0 success
- *             - 1 read failed
- * @note       none
- */
-uint8_t fm24clxx_interface_iic_read(uint8_t addr, uint8_t reg, uint8_t *buf, uint16_t len);
+    /**
+     * @brief      interface iic bus read
+     * @param[in]  addr is the iic device write address
+     * @param[in]  reg is the iic register address
+     * @param[out] *buf points to a data buffer
+     * @param[in]  len is the length of the data buffer
+     * @return     status code
+     *             - 0 success
+     *             - 1 read failed
+     * @note       none
+     */
+    uint8_t fm24clxx_interface_iic_read ( uint8_t addr, uint8_t reg, uint8_t* buf, uint16_t len );
 
-/**
- * @brief     interface iic bus write
- * @param[in] addr is the iic device write address
- * @param[in] reg is the iic register address
- * @param[in] *buf points to a data buffer
- * @param[in] len is the length of the data buffer
- * @return    status code
- *            - 0 success
- *            - 1 write failed
- * @note      none
- */
-uint8_t fm24clxx_interface_iic_write(uint8_t addr, uint8_t reg, uint8_t *buf, uint16_t len);
+    /**
+     * @brief     interface iic bus write
+     * @param[in] addr is the iic device write address
+     * @param[in] reg is the iic register address
+     * @param[in] *buf points to a data buffer
+     * @param[in] len is the length of the data buffer
+     * @return    status code
+     *            - 0 success
+     *            - 1 write failed
+     * @note      none
+     */
+    uint8_t fm24clxx_interface_iic_write ( uint8_t addr, uint8_t reg, uint8_t* buf, uint16_t len );
 
-/**
- * @brief      interface iic bus read with 16 bits register address
- * @param[in]  addr is the iic device write address
- * @param[in]  reg is the iic register address
- * @param[out] *buf points to a data buffer
- * @param[in]  len is the length of the data buffer
- * @return     status code
- *             - 0 success
- *             - 1 read failed
- * @note       none
- */
-uint8_t fm24clxx_interface_iic_read_address16(uint8_t addr, uint16_t reg, uint8_t *buf, uint16_t len);
+    /**
+     * @brief      interface iic bus read with 16 bits register address
+     * @param[in]  addr is the iic device write address
+     * @param[in]  reg is the iic register address
+     * @param[out] *buf points to a data buffer
+     * @param[in]  len is the length of the data buffer
+     * @return     status code
+     *             - 0 success
+     *             - 1 read failed
+     * @note       none
+     */
+    uint8_t fm24clxx_interface_iic_read_address16 ( uint8_t addr, uint16_t reg, uint8_t* buf, uint16_t len );
 
-/**
- * @brief     interface iic bus write with 16 bits register address
- * @param[in] addr is the iic device write address
- * @param[in] reg is the iic register address
- * @param[in] *buf points to a data buffer
- * @param[in] len is the length of the data buffer
- * @return    status code
- *            - 0 success
- *            - 1 write failed
- * @note      none
- */
-uint8_t fm24clxx_interface_iic_write_address16(uint8_t addr, uint16_t reg, uint8_t *buf, uint16_t len);
+    /**
+     * @brief     interface iic bus write with 16 bits register address
+     * @param[in] addr is the iic device write address
+     * @param[in] reg is the iic register address
+     * @param[in] *buf points to a data buffer
+     * @param[in] len is the length of the data buffer
+     * @return    status code
+     *            - 0 success
+     *            - 1 write failed
+     * @note      none
+     */
+    uint8_t fm24clxx_interface_iic_write_address16 ( uint8_t addr, uint16_t reg, uint8_t* buf, uint16_t len );
 
-/**
- * @brief     interface delay ms
- * @param[in] ms
- * @note      none
- */
-void fm24clxx_interface_delay_ms(uint32_t ms);
+    /**
+     * @brief     interface delay ms
+     * @param[in] ms
+     * @note      none
+     */
+    void fm24clxx_interface_delay_ms ( uint32_t ms );
 
-/**
- * @brief     interface print format data
- * @param[in] fmt is the format data
- * @note      none
- */
-void fm24clxx_interface_debug_print(const char *const fmt, ...);
+    /**
+     * @brief     interface print format data
+     * @param[in] fmt is the format data
+     * @note      none
+     */
+    void fm24clxx_interface_debug_print ( const char* const fmt, ... );
 
-/**
- * @}
- */
+    /**
+     * @}
+     */
 
 #ifdef __cplusplus
 }

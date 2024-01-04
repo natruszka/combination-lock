@@ -12,13 +12,13 @@ static void touchpanelDelayUS ( uint32_t cnt )
 
 void lcdTouchscreenGetCoords ( int* x, int* y )
 {
-	char temp[10];
+	char temp[20];
 	while ( 1 )
 	{
 		if ( !GPIO_PinRead ( 0, 19 ) )
 		{
 			touchpanelGetXY ( x, y );
-			sprintf ( temp, "%d, %d \r\n", *x, *y );
+			sprintf ( temp, "%d, %d", *x, *y );
 			send ( temp );
 			break;
 		}

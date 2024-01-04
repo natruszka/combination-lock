@@ -11,4 +11,4 @@
 void lcdTouchscreenGetCoords ( int* x, int* y );
 void lcdTouchscreenCallibrate ( void );
 
-#endif // LCD_TOUCHSCREEN_H
+#endif // LCD_TOUCHSCFREEN_H
