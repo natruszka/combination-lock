@@ -94,7 +94,7 @@ extern "C" {
         void ( *debug_print )( const char* const fmt, ... );                                               /**< point to a debug_print function address */
         uint16_t id;                                                                                   /**< chip id */
         uint8_t inited;                                                                                /**< inited flag */
-    } __attribute__((packed)) fm24clxx_handle_t;
+    } __attribute__ ( ( packed ) ) fm24clxx_handle_t;
 
     /**
      * @brief fm24clxx information structure definition

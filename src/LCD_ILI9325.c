@@ -15,7 +15,7 @@ void init_ILI9325 ( void )
    //Run only if DeviceCode is 0x9325 or 0x9328
 
    lcdWriteReg ( 0xE5, 0x78F0 ); /* set SRAM internal timing */
-   lcdWriteReg ( 0x01, 0x0100 ); /* set Driver Output Control */
+   lcdWriteRFeg ( 0x01, 0x0100 ); /* set Driver Output Control */
    lcdWriteReg ( 0x02, 0x0700 ); /* set 1 line inversion */
    lcdWriteReg ( 0x03, 0x1030 ); /* set GRAM write direction and BGR=1 */
    lcdWriteReg ( 0x04, 0x0000 ); /* Resize register */
