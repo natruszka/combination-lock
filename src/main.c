@@ -12,6 +12,16 @@ static void touchpanelDelayUS(uint32_t cnt) {
 		}
 	}
 }
+static void touchpanelDelayUS(uint32_t cnt) {
+	volatile uint32_t i;
+	for (i = 0; i < cnt; i++) {
+		volatile uint8_t us = 12; /*  */
+		while (us--) /*  */
+		{
+			;
+		}
+	}
+}
 int main ( void )
 {
 	fm24clxx_address_t addr = FM24CLXX_ADDRESS_A000;
@@ -58,11 +68,13 @@ int main ( void )
 	lcdWriteReg ( ADRY_RAM, 0 );
 	lcdWriteIndex ( DATA_RAM );
 	touchpanelDelayUS(40);
+	touchpanelDelayUS(40);
 	for ( int register x = 0; x < LCD_MAX_X * LCD_MAX_Y; x++ )
 	{
 		lcdWriteData ( LCDBlueSea );
 	}
 	lcdDrawConfigTouchpanel ();
+	lcdTouchscreenCallibrate ();
 	lcdDrawInterface ();
 	// lcdTest();
 

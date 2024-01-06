@@ -1,7 +1,6 @@
 #include "interface_LCD.h"
 #include "asciiLib.h"
 #include <stdbool.h>
-#include <stdbool.h>
 #include <string.h>
 #include <stdlib.h>
 
