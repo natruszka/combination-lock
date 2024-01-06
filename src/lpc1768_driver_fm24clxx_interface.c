@@ -50,7 +50,7 @@
   */
 uint8_t fm24clxx_interface_iic_init ( void )
 {
-	i2c0_init ( MODE_400kbps, 3 );
+	i2c0_init ();
 	return 0;
 }
 
@@ -63,6 +63,7 @@ uint8_t fm24clxx_interface_iic_init ( void )
  */
 uint8_t fm24clxx_interface_iic_deinit ( void )
 {
+	i2c0_deinit ();
 	return 0;
 }
 
@@ -79,13 +80,7 @@ uint8_t fm24clxx_interface_iic_deinit ( void )
  */
 uint8_t fm24clxx_interface_iic_read ( uint8_t addr, uint8_t reg, uint8_t* buf, uint16_t len )
 {
-	uint32_t res = 0;
-	if ( ( res = i2c0_receive ( addr, buf, len ) ) == 0xFFFFFFFF )
-	{
-		send ( "I2C receive failed" );
-	}
-
-	( void ) reg;
+	i2c0_read ( addr, reg, buf, len );
 	return 0;
 }
 
@@ -102,14 +97,7 @@ uint8_t fm24clxx_interface_iic_read ( uint8_t addr, uint8_t reg, uint8_t* buf, u
  */
 uint8_t fm24clxx_interface_iic_write ( uint8_t addr, uint8_t reg, uint8_t* buf, uint16_t len )
 {
-	uint32_t res = 0;
-	send("I2C send");
-	if ( ( res = i2c0_send ( addr, buf, len ) ) == 0xFFFFFFFF )
-	{
-		send ( "I2C send failed" );
-	}
-
-	( void ) reg;
+	i2c0_write ( addr, reg, buf, len );
 	return 0;
 }
 
@@ -126,10 +114,7 @@ uint8_t fm24clxx_interface_iic_write ( uint8_t addr, uint8_t reg, uint8_t* buf, 
  */
 uint8_t fm24clxx_interface_iic_read_address16 ( uint8_t addr, uint16_t reg, uint8_t* buf, uint16_t len )
 {
-	( void ) addr;
-	( void ) reg;
-	( void ) buf;
-	( void ) len;
+	i2c0_read_address16 ( addr, reg, buf, len );
 	return 0;
 }
 
@@ -146,10 +131,7 @@ uint8_t fm24clxx_interface_iic_read_address16 ( uint8_t addr, uint16_t reg, uint
  */
 uint8_t fm24clxx_interface_iic_write_address16 ( uint8_t addr, uint16_t reg, uint8_t* buf, uint16_t len )
 {
-	( void ) addr;
-	( void ) reg;
-	( void ) buf;
-	( void ) len;
+	i2c0_write_address16 ( addr, reg, buf, len );
 	return 0;
 }
 
@@ -160,7 +142,7 @@ uint8_t fm24clxx_interface_iic_write_address16 ( uint8_t addr, uint16_t reg, uin
  */
 void fm24clxx_interface_delay_ms ( uint32_t ms )
 {
-	delayUS ( ms );
+	delayUS ( ms * 1000 );
 }
 
 /**

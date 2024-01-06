@@ -8,7 +8,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-	uint8_t fm24clxx_read_test ( void );
+  uint8_t fm24clxx_read_test ( void );
   /**
    * @brief     init
    * @param[in] type is the chip type

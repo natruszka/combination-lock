@@ -8,7 +8,7 @@
 int main ( void )
 {
 	fm24clxx_address_t addr = FM24CLXX_ADDRESS_A000;
-	fm24clxx_t chip_type = FM24CL04B;
+	fm24clxx_t chip_type = FM24CL16B;
 	fm24clxx_info_t info;
 	uint8_t res = 0;
 
@@ -43,7 +43,7 @@ int main ( void )
 	}
 
 	fm24clxx_read_test ();
-	
+
 	touchpanelInit ();
 	lcdConfiguration ();
 	init_ILI9325 ();

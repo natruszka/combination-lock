@@ -414,7 +414,7 @@ uint8_t fm24clxx_write ( fm24clxx_handle_t* handle, uint16_t address, uint8_t* b
     {
         while ( 1 )
         {
-            handle->debug_print( "fm24clxx: write address: 0x%04X, data: 0x%02X, len: %d.", address, *buf, page_remain);
+            handle->debug_print ( "fm24clxx: write address: 0x%04X, data: 0x%02X, len: %d.", address, *buf, page_remain );
             if ( handle->iic_write ( ( uint8_t ) ( handle->iic_addr + ( ( address / 256 ) << 1 ) ), ( uint8_t ) ( address % 256 ), buf,
                  page_remain ) != 0 )                                                                            /* write page */
             {
@@ -422,7 +422,7 @@ uint8_t fm24clxx_write ( fm24clxx_handle_t* handle, uint16_t address, uint8_t* b
 
                 return 1;                                                                                     /* return error */
             }
-            handle->debug_print( "fm24clxx: wrote address: 0x%04X, data: 0x%02X, len: %d.", address, *buf, page_remain);
+            handle->debug_print ( "fm24clxx: wrote address: 0x%04X, data: 0x%02X, len: %d.", address, *buf, page_remain );
             if ( page_remain == len )                                                                           /* check break */
             {
                 break;                                                                                        /* break */
@@ -441,7 +441,7 @@ uint8_t fm24clxx_write ( fm24clxx_handle_t* handle, uint16_t address, uint8_t* b
                     page_remain = 8;                                                                          /* set page */
                 }
             }
-            handle->debug_print( "fm24clxx: incremented address: 0x%04X, data: 0x%02X, len: %d.", address, *buf, page_remain);
+            handle->debug_print ( "fm24clxx: incremented address: 0x%04X, data: 0x%02X, len: %d.", address, *buf, page_remain );
         }
     }
 

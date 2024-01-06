@@ -19,9 +19,10 @@ uint8_t fm24clxx_read_test ( void )
     uint8_t buf[12];
     uint8_t buf_check[12];
     uint16_t inc;
-	
-	fm24clxx_t type = FM24CL04B;
-	
+    fm24clxx_t type;
+
+    fm24clxx_get_type ( &handle, &type );
+
     fm24clxx_interface_debug_print ( "fm24clxx: start read test." );
     inc = ( ( uint16_t ) type + 1 ) / 8;
     for ( i = 0; i < 8; i++ )
@@ -30,9 +31,9 @@ uint8_t fm24clxx_read_test ( void )
         {
             buf[j] = ( uint8_t ) ( 'A' + j );
         }
-        fm24clxx_interface_debug_print( "fm24clxx: write %d bytes of data to address 0x%04X.", 12, i * inc);
+        fm24clxx_interface_debug_print ( "fm24clxx: write %d bytes of data to address 0x%04X.", 12, i * inc );
         /* write data */
-        res = fm24clxx_write ( &handle, i * inc, ( uint8_t* ) buf, 12 );
+        res = fm24clxx_fram_write ( i * inc, ( uint8_t* ) buf, 12 );
         if ( res != 0 )
         {
             fm24clxx_interface_debug_print ( "fm24clxx: write failed." );
@@ -40,9 +41,9 @@ uint8_t fm24clxx_read_test ( void )
             return 1;
         }
 
-        fm24clxx_interface_debug_print( "fm24clxx: read %d bytes of data from address 0x%04X.", 12, i * inc);
+        fm24clxx_interface_debug_print ( "fm24clxx: read %d bytes of data from address 0x%04X.", 12, i * inc );
         /* read data */
-        res = fm24clxx_read ( &handle, i * inc, ( uint8_t* ) buf_check, 12 );
+        res = fm24clxx_fram_read ( i * inc, ( uint8_t* ) buf_check, 12 );
         if ( res != 0 )
         {
             fm24clxx_interface_debug_print ( "fm24clxx: read failed." );
@@ -64,7 +65,7 @@ uint8_t fm24clxx_read_test ( void )
 
     /* finish read test */
     fm24clxx_interface_debug_print ( "fm24clxx: finish read test." );
-    ( void ) fm24clxx_deinit ( &handle );
+    fm24clxx_fram_deinit();
 
     return 0;
 }
