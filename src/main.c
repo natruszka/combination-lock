@@ -69,11 +69,10 @@ int main ( void )
 	//	char temp[10];
 	//	sprintf(temp, "%d", LCD_MAX_Y);
 	//	send(temp);
-
+	int *x, *y;
 	send("I'm free\r\n");
 	while ( 1 )
 	{
-		int *x, *y;
 		lcdTouchscreenGetCoords(x, y);
 	}
 }
