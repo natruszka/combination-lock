@@ -82,7 +82,7 @@ void lcdDrawLine(uint16_t x0, uint16_t y0,
     }
 }
 
-void lcdClearScreen( void )
+void lcdClearScreen(void)
 {
     for (int register x = 0; x < LCD_MAX_X * LCD_MAX_Y; x++)
     {
@@ -123,6 +123,8 @@ void lcdDrawInterface(void)
 
     unsigned char letter[16];
 
+    lcdWriteString("____", xFirstRow, yFirstRow / 2 - 4);
+
     GetASCIICode(0, letter, '1');
     lcdWriteChar(LCD_MAX_X / 2 - xFirstRow - 4, yFirstRow + y_numbers - 8, letter);
 
@@ -162,29 +164,54 @@ void lcdDrawInterface(void)
     lcdDisplayInfo(false);
 }
 
+void lcdClearInput(void)
+{
+    unsigned char buffer[16] = {'\0'};
+    GetASCIICode(0, buffer, '_');
+    for (int i = 0; i < 4; i++)
+        lcdWriteChar(xFirstRow + i * 8, yFirstRow / 2 - 4, buffer);
+}
+
 void lcdDisplayCode(char letter, bool isBackspace, bool isEnter)
 {
     static int pos;
-		unsigned char buffer[16] = {'\0'};
-		send(&letter);
-		send("\n\r");
+    static char code[4];
+    unsigned char buffer[16] = {'\0'};
+    send(&letter);
+    send("\n\r");
+
     if (isBackspace)
     {
         if (pos == 0)
             return;
         pos--;
-        GetASCIICode(0, buffer, ' ');
+        GetASCIICode(0, buffer, '_');
         lcdWriteChar(xFirstRow + pos * 8, yFirstRow / 2 - 4, buffer);
         return;
     }
-    GetASCIICode(0, buffer, '*');
-    lcdWriteChar(xFirstRow + pos * 8, yFirstRow / 2 - 4, buffer);
-    if (++pos == 4)
+
+    if (isEnter)
     {
-        checkCode(" ");
+        checkCode(code, pos);
         pos = 0;
+        lcdClearInput();
+        return;
+    }
+
+    if (pos < 4)
+    {
+        code[pos] = letter;
+        GetASCIICode(0, buffer, '*');
+        lcdWriteChar(xFirstRow + pos * 8, yFirstRow / 2 - 4, buffer);
+    }
+
+    if (++pos >= 4)
+    {
+        pos = 4;
+        return;
     }
 }
+
 void lcdDisplayInfo(bool isOpen)
 {
     if (isOpen)
@@ -193,10 +220,33 @@ void lcdDisplayInfo(bool isOpen)
         lcdWriteString("CLOSED", xFirstRow, 8);
 }
 
-void checkCode(const char *code)
+void checkCode(const char *code, int len)
 {
     static int failureCount;
-    //if ()
+    bool isOpen;
+    char correctCode[4] = {'1', '2', '3', '4'};
+    if (len < 3)
+    {
+        isOpen = false;
+        failureCount++;
+        lcdDisplayInfo(isOpen);
+        return;
+    }
+    for (int i = 0; i < 4; i++)
+    {
+        if (code[i] != correctCode[i])
+        {
+            isOpen = false;
+            failureCount++;
+            lcdDisplayInfo(isOpen);
+
+            return;
+        }
+    }
+    isOpen = true;
+    failureCount = 0;
+    lcdDisplayInfo(isOpen);
+    return;
 }
 
 void lcdDisplayDate(void)
@@ -270,222 +320,9 @@ void lcdHandler(int x, int y)
     }
 }
 
-void lcdDisplayCode(char letter, bool isBackspace, bool isEnter)
-{
-    static int pos;
-		unsigned char buffer[16] = {'\0'};
-		send(&letter);
-    if (isBackspace)
-    {
-        if (pos == 0)
-            return;
-        pos--;
-        GetASCIICode(0, buffer, ' ');
-        lcdWriteChar(xFirstRow + pos * 8, yFirstRow / 2 - 4, buffer);
-        return;
-    }
-    GetASCIICode(0, buffer, '*');
-    lcdWriteChar(xFirstRow + pos * 8, yFirstRow / 2 - 4, buffer);
-    if (++pos == 4)
-    {
-        checkCode(" ");
-        pos = 0;
-    }
-}
-void lcdDisplayInfo(bool isOpen)
-{
-    if (isOpen)
-        lcdWriteString("OPEN  ", xFirstRow, 8);
-    else
-        lcdWriteString("CLOSED", xFirstRow, 8);
-}
-
-void checkCode(const char *code)
-{
-    static int failureCount;
-    //if ()
-}
-
-void lcdDisplayDate(void)
-{
-    lcdWriteString("date", 0, 8); // test pozycji
-}
-
-void lcdHandler(int x, int y)
-{
-    x = x * A + y * B;
-    y = x * C + y * D;
-    if (y > yFirstRow)
-    {
-        if (x < xFirstRow)
-        {
-            if (y < ySecondRow)
-            {
-                lcdDisplayCode('1', false, false);
-            }
-            else if (y < yThirdRow)
-            {
-                lcdDisplayCode('4', false, false);
-            }
-            else if (y < yForthRow)
-            {
-                lcdDisplayCode('7', false, false);
-            }
-            else
-            {
-                lcdDisplayCode(' ', true, false);
-            }
-        }
-        else if (x < xSecondRow)
-        {
-            if (y < ySecondRow)
-            {
-                lcdDisplayCode('2', false, false);
-            }
-            else if (y < yThirdRow)
-            {
-                lcdDisplayCode('5', false, false);
-            }
-            else if (y < yForthRow)
-            {
-                lcdDisplayCode('8', false, false);
-            }
-            else
-            {
-                lcdDisplayCode('0', false, false);
-            }
-        }
-        else
-        {
-            if (y < ySecondRow)
-            {
-                lcdDisplayCode('3', false, false);
-            }
-            else if (y < yThirdRow)
-            {
-                lcdDisplayCode('6', false, false);
-            }
-            else if (y < yForthRow)
-            {
-                lcdDisplayCode('9', false, false);
-            }
-            else
-            {
-                lcdDisplayCode(' ', false, true);
-            }
-        }
-    }
-}
-
-void lcdDisplayCode(char letter, bool isBackspace, bool isEnter)
-{
-    static int pos;
-		unsigned char buffer[16] = {'\0'};
-		send(&letter);
-    if (isBackspace)
-    {
-        if (pos == 0)
-            return;
-        pos--;
-        GetASCIICode(0, buffer, ' ');
-        lcdWriteChar(xFirstRow + pos * 8, yFirstRow / 2 - 4, buffer);
-        return;
-    }
-    GetASCIICode(0, buffer, '*');
-    lcdWriteChar(xFirstRow + pos * 8, yFirstRow / 2 - 4, buffer);
-    if (++pos == 4)
-    {
-        checkCode(" ");
-        pos = 0;
-    }
-}
-void lcdDisplayInfo(bool isOpen)
-{
-    if (isOpen)
-        lcdWriteString("OPEN  ", xFirstRow, 8);
-    else
-        lcdWriteString("CLOSED", xFirstRow, 8);
-}
-
-void checkCode(const char *code)
-{
-    static int failureCount;
-    //if ()
-}
-
-void lcdDisplayDate(void)
-{
-    lcdWriteString("date", 0, 8); // test pozycji
-}
-
-void lcdHandler(int x, int y)
-{
-    x = x * A + y * B;
-    y = x * C + y * D;
-    if (y > yFirstRow)
-    {
-        if (x < xFirstRow)
-        {
-            if (y < ySecondRow)
-            {
-                lcdDisplayCode('1', false, false);
-            }
-            else if (y < yThirdRow)
-            {
-                lcdDisplayCode('4', false, false);
-            }
-            else if (y < yForthRow)
-            {
-                lcdDisplayCode('7', false, false);
-            }
-            else
-            {
-                lcdDisplayCode(' ', true, false);
-            }
-        }
-        else if (x < xSecondRow)
-        {
-            if (y < ySecondRow)
-            {
-                lcdDisplayCode('2', false, false);
-            }
-            else if (y < yThirdRow)
-            {
-                lcdDisplayCode('5', false, false);
-            }
-            else if (y < yForthRow)
-            {
-                lcdDisplayCode('8', false, false);
-            }
-            else
-            {
-                lcdDisplayCode('0', false, false);
-            }
-        }
-        else
-        {
-            if (y < ySecondRow)
-            {
-                lcdDisplayCode('3', false, false);
-            }
-            else if (y < yThirdRow)
-            {
-                lcdDisplayCode('6', false, false);
-            }
-            else if (y < yForthRow)
-            {
-                lcdDisplayCode('9', false, false);
-            }
-            else
-            {
-                lcdDisplayCode(' ', false, true);
-            }
-        }
-    }
-}
 void lcdTest(void)
 {
-    lcdWriteString("date", 0, yFirstRow - 16); // test pozycji
+    lcdWriteString("date", 0, yFirstRow - 16);          // test pozycji
     lcdWriteString("date", xSecondRow, yFirstRow - 16); // test pozycji
-    lcdWriteString("KODD", xFirstRow,  yFirstRow / 2 - 4);
+    lcdWriteString("KODD", xFirstRow, yFirstRow / 2 - 4);
 }
