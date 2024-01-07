@@ -16,9 +16,11 @@ void lcdDrawConfigTouchpanel ( void );
 void lcdDrawInterface ( void );
 void lcdDisplayCode(char letter, bool isBackspace, bool isEnter);
 void lcdDisplayInfo(bool isOpen);
+void lcdServisCode(void);
 void checkCode(const char *code, int len);
 void lcdClearInput(void);
-void lcdDisplayDate(void);
+void lcdDisplayDate(const char* date);
 void lcdHandler(int x, int y);
-void lcdTest(void);
+void lcdOpenDate(const char *date);
+void lcdAlarmDate(const char *date);
 #endif // INTERFACE_LCD_H

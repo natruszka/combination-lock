@@ -1,4 +1,5 @@
 #include "interface_LCD.h"
+#include "timer.h"
 #include "asciiLib.h"
 #include <stdbool.h>
 #include <string.h>
@@ -160,7 +161,6 @@ void lcdDrawInterface(void)
 
     GetASCIICode(0, letter, '#');
     lcdWriteChar(LCD_MAX_X / 2 + xFirstRow - 4, LCD_MAX_Y - y_numbers - 8, letter);
-    lcdDisplayDate();
     lcdDisplayInfo(false);
 }
 
@@ -215,9 +215,20 @@ void lcdDisplayCode(char letter, bool isBackspace, bool isEnter)
 void lcdDisplayInfo(bool isOpen)
 {
     if (isOpen)
-        lcdWriteString("OPEN  ", xFirstRow, 8);
+    {
+        lcdWriteString("OPEN  ", xSecondRow, 8);
+        RTC_ShowOpenDate();
+    }
     else
-        lcdWriteString("CLOSED", xFirstRow, 8);
+    {
+        lcdWriteString("CLOSED", xSecondRow, 8);
+    }
+}
+
+void lcdServisCode(void)
+{
+    lcdWriteString("SERVICE", xSecondRow, 8);
+    RTC_ShowAlarmDate();
 }
 
 void checkCode(const char *code, int len)
@@ -230,7 +241,6 @@ void checkCode(const char *code, int len)
         isOpen = false;
         failureCount++;
         lcdDisplayInfo(isOpen);
-        return;
     }
     for (int i = 0; i < 4; i++)
     {
@@ -238,10 +248,13 @@ void checkCode(const char *code, int len)
         {
             isOpen = false;
             failureCount++;
-            lcdDisplayInfo(isOpen);
-
-            return;
         }
+    }
+    lcdDisplayInfo(isOpen);
+    if (failureCount >= 3)
+    {
+        lcdServisCode();
+        return;
     }
     isOpen = true;
     failureCount = 0;
@@ -249,9 +262,9 @@ void checkCode(const char *code, int len)
     return;
 }
 
-void lcdDisplayDate(void)
+void lcdDisplayDate(const char *date)
 {
-    lcdWriteString("date", 0, 8); // test pozycji
+    lcdWriteString(date, 0, 8); // test pozycji
 }
 
 void lcdHandler(int x, int y)
@@ -320,9 +333,12 @@ void lcdHandler(int x, int y)
     }
 }
 
-void lcdTest(void)
+void lcdOpenDate(const char *date)
 {
-    lcdWriteString("date", 0, yFirstRow - 16);          // test pozycji
-    lcdWriteString("date", xSecondRow, yFirstRow - 16); // test pozycji
-    lcdWriteString("KODD", xFirstRow, yFirstRow / 2 - 4);
+    lcdWriteString(date, 0, yFirstRow - 16); 
+}
+
+void lcdAlarmDate(const char *date)
+{
+    lcdWriteString(date, LCD_MAX_X / 2, yFirstRow - 16); 
 }

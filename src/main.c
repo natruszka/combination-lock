@@ -1,6 +1,7 @@
 #include "interface_LCD.h"
 #include "touchscreen_LCD.h"
 #include "UART.h"
+#include "timer.h"
 
 static void touchpanelDelayUS(uint32_t cnt) {
 	volatile uint32_t i;
@@ -66,12 +67,16 @@ int main ( void )
 	lcdDrawConfigTouchpanel ();
 	lcdTouchscreenCallibrate ();
 	lcdDrawInterface ();
-	// lcdTest();
-
-	//	char temp[10];
-	//	sprintf(temp, "%d", LCD_MAX_Y);
-	//	send(temp);
+	
 	send("I'm free\r\n");
+	RTC_Configuration();
+//		LPC_RTC->DOM    = 7;   // Update date value 
+//    LPC_RTC->MONTH  = 1;   // Update month value
+//    LPC_RTC->YEAR   = 2024; // Update year value
+
+//    LPC_RTC->HOUR   = 21;   // Update hour value 
+//    LPC_RTC->MIN    = 01;   // Update min value
+//    LPC_RTC->SEC    = 00;   // Update sec value 
 	int x = 0;
 	int	y = 0;
 	while ( 1 )
