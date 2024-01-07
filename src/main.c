@@ -28,8 +28,8 @@ int main ( void )
 	{
 		lcdWriteData ( LCDBlueSea );
 	}
-	// lcdDrawConfigTouchpanel ();
-	// lcdTouchscreenCallibrate ();
+	lcdDrawConfigTouchpanel ();
+	lcdTouchscreenCallibrate ();
 	lcdDrawInterface ();
 	lcdTest();
 
@@ -38,7 +38,11 @@ int main ( void )
 	//	send(temp);
 
 	send("I'm free\r\n");
+	int x = 0;
+	int	y = 0;
 	while ( 1 )
 	{
+		lcdTouchscreenGetCoords(&x, &y);
+		touchpanelDelayUS(20000);
 	}
 }

@@ -1,18 +1,21 @@
 #include "touchscreen_LCD.h"
 
-int A;
-int B;
-int C;
-int D;
+float A;
+float B;
+float C;
+float D;
+float E;
+float F;
 static bool isConf;
 
 static void touchpanelDelayUS(uint32_t cnt)
 {
 	volatile uint32_t i;
-	for ( i = 0; i < cnt; i++ )
+	for (i = 0; i < cnt; i++)
 	{
 		volatile uint8_t us = 12; /*  */
-		while ( us-- );
+		while (us--)
+			;
 	}
 }
 
@@ -23,8 +26,8 @@ void lcdTouchscreenGetCoords(int *x, int *y)
 		if (!GPIO_PinRead(0, 19))
 		{
 			touchpanelGetXY(x, y);
-			sprintf(temp, "%d, %d \r\n", *x, *y);
-			send(temp);
+//			sprintf(temp, "%d, %d \r\n", *x, *y);
+//			send(temp);
 			if (isConf)
 			{
 				lcdHandler(*x, *y);
@@ -71,26 +74,62 @@ int average(int cords[], int len)
 
 void calculateConstants(int x[], int y[], int len)
 {
-	int x1 = average(x, len/3);
-	int x2 = average(x + len / 3, len/3);
-	int x3 = average(x + 2 * len / 3, len/3);
+	int xd1 = 20;
+	int yd1 = 20;
+	int xd2 = 220;
+	int yd2 = 20;
+	int xd3 = 20;
+	int yd3 = 300;
+	int x1 = average(x, len / 3);
+	int x2 = average(x + len / 3, len / 3);
+	int x3 = average(x + 2 * len / 3, len / 3);
 
-	int y1 = average(y, len/3);
-	int y2 = average(y + len / 3, len/3);
-	int y3 = average(y + 2 * len / 3, len/3);
+	int y1 = average(y, len / 3);
+	int y2 = average(y + len / 3, len / 3);
+	int y3 = average(y + 2 * len / 3, len / 3);
 
-	int x1subx3 = x1 - x3;
-	int y3suby1 = y3 - y1;
-	int Bdivider = x2 * y3suby1 / x1subx3 + y2;
-	B = 220 / Bdivider;
-	A = B * y3suby1 / x1subx3;
+	char srednie[20];
+	sprintf(srednie, "Srednia 1: %d, %d\n\r", x1, y1);
+	send(srednie);
+	sprintf(srednie, "Srednia 2: %d, %d\n\r", x2, y2);
+	send(srednie);
+	sprintf(srednie, "Srednia 3: %d, %d\n\r", x3, y3);
+	send(srednie);
+	int K = (x1 - x3) * (y2 - y3) - ((x2 - x3) * (y1 - y3));
+//	A = ((xd1 - xd3) * (y2 - y3) - (xd2 - xd3) * (y1 - y3)) / K;
+//	B = ((x1 - x3) * (xd2 - xd3) - (xd1 - xd3) * (x2 - x3)) / K;
+//	C = (y1 * (x3 * xd2 - x2 * xd3) + y2 * (x1 * xd3 - x3 * xd1) + y3 * (x2 * xd1 - x1 * xd2)) / K;
+//	D = ((yd1 - yd3) * (y2 - y3) - (yd2 - yd3) * (y1 - y3)) / K;
+//	E = ((x1 - x3) * (yd2 - yd3) - (yd1 - yd3) * (x2 - x3)) / K;
+//	F = (y1 * (x3 * yd2 - x2 * yd3) + y2 * (x1 * yd3 - x3 * yd1) + y3 * (x2 * yd1 - x1 * yd2)) / K;
+	float dzielnik = y1 * (x2-x3)-y2*(x1-x3)+y3*(x1-x2);
+	int mozeA = 200 *y1 - 200 *y3;
+	int mozeB = -200*x1 +200*x3;
+	int mozeC = 20*x2*y1-220*x3*y1 - 20*x1*y2 + 20*x3*y2 + 220*x1*y3 - 20*x2*y3;
+	int mozeD = -280*y1 +280*y2;
+	int mozeE = 280*x1-280*x2;
+	int mozeF = 300*x2*y1 - 20*x3*y1 - 300*x1*y2+20*x3*y2 +20*x1*y3 - 20*x2*y3;
+	A = mozeA / dzielnik;
+	B = mozeB / dzielnik;
+	C = mozeC / dzielnik;
+	D = mozeD / dzielnik;
+	E = mozeE / dzielnik;
+	F = mozeF / dzielnik;
+	// 	int x1subx3 = x1 - x3;
+	// 	int y3suby1 = y3 - y1;
+	// 	int Bdivider = x2 * y3suby1 / x1subx3 + y2;
+	// 	B = 220 / Bdivider;
+	// 	A = B * y3suby1 / x1subx3;
 
-	int y2suby1 = y2 - y1;
-	int x1subx2 = x1 - x2;
-	int Ddivider = x3 * y2suby1 / x1subx2 + y3;
-	D = 300 / Ddivider;
-	C = D * y2suby1 / x1subx2;
-	isConf = true;
+	// 	int y2suby1 = y2 - y1;
+	// 	int x1subx2 = x1 - x2;
+	// 	int Ddivider = x3 * y2suby1 / x1subx2 + y3;
+	// 	D = 300 / Ddivider;
+	// 	C = D * y2suby1 / x1subx2;
+		char temp[70];
+		sprintf(temp, "%f, %f, %f, %f, %f, %f\n\r", A, B, C, D,E,F);
+		send(temp);
+		isConf = true;
 }
 
 // zwiekszanie stosu PAMIETAC DEBILE !!! do 0x00000800

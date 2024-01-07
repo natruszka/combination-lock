@@ -508,5 +508,13 @@
     </files>
   </RTE>
 
-</Project>
+  <LayerInfo>
+    <Layers>
+      <Layer>
+        <LayName>combination_lock</LayName>
+        <LayPrjMark>1</LayPrjMark>
+      </Layer>
+    </Layers>
+  </LayerInfo>
 
+</Project>

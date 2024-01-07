@@ -10,10 +10,12 @@ const static uint16_t yFirstRow = LCD_MAX_Y / 3;
 const static uint16_t ySecondRow = LCD_MAX_Y / 2;
 const static uint16_t yThirdRow = 2 * LCD_MAX_Y / 3;
 const static uint16_t yForthRow = 5 * LCD_MAX_Y / 6;
-extern int A;
-extern int B;
-extern int C;
-extern int D;
+extern float A;
+extern float B;
+extern float C;
+extern float D;
+extern float E;
+extern float F;
 
 void lcdWriteChar(uint16_t x_start, uint16_t y_start, unsigned char letter[16])
 {
@@ -165,6 +167,7 @@ void lcdDisplayCode(char letter, bool isBackspace, bool isEnter)
     static int pos;
 		unsigned char buffer[16] = {'\0'};
 		send(&letter);
+		send("\n\r");
     if (isBackspace)
     {
         if (pos == 0)
@@ -203,21 +206,21 @@ void lcdDisplayDate(void)
 
 void lcdHandler(int x, int y)
 {
-    x = x * A + y * B;
-    y = x * C + y * D;
-    if (y > yFirstRow)
+    float xd = x * A + y * B + C;
+    float yd = x * D + y * E + F;
+    if (yd > yFirstRow)
     {
-        if (x < xFirstRow)
+        if (xd < xFirstRow)
         {
-            if (y < ySecondRow)
+            if (yd < ySecondRow)
             {
                 lcdDisplayCode('1', false, false);
             }
-            else if (y < yThirdRow)
+            else if (yd < yThirdRow)
             {
                 lcdDisplayCode('4', false, false);
             }
-            else if (y < yForthRow)
+            else if (yd < yForthRow)
             {
                 lcdDisplayCode('7', false, false);
             }
@@ -226,17 +229,17 @@ void lcdHandler(int x, int y)
                 lcdDisplayCode(' ', true, false);
             }
         }
-        else if (x < xSecondRow)
+        else if (xd < xSecondRow)
         {
-            if (y < ySecondRow)
+            if (yd < ySecondRow)
             {
                 lcdDisplayCode('2', false, false);
             }
-            else if (y < yThirdRow)
+            else if (yd < yThirdRow)
             {
                 lcdDisplayCode('5', false, false);
             }
-            else if (y < yForthRow)
+            else if (yd < yForthRow)
             {
                 lcdDisplayCode('8', false, false);
             }
@@ -247,15 +250,15 @@ void lcdHandler(int x, int y)
         }
         else
         {
-            if (y < ySecondRow)
+            if (yd < ySecondRow)
             {
                 lcdDisplayCode('3', false, false);
             }
-            else if (y < yThirdRow)
+            else if (yd < yThirdRow)
             {
                 lcdDisplayCode('6', false, false);
             }
-            else if (y < yForthRow)
+            else if (yd < yForthRow)
             {
                 lcdDisplayCode('9', false, false);
             }
