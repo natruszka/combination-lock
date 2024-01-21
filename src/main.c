@@ -42,8 +42,6 @@ int main ( void )
 		fm24clxx_interface_debug_print ( "fm24clxx: min temperature is %0.fC.", ( double )info.temperature_min );
 	}
 
-	fm24clxx_read_test ();
-
 	touchpanelInit ();
 	lcdConfiguration ();
 	init_ILI9325 ();
@@ -59,6 +57,7 @@ int main ( void )
 	//	lcdTouchscreenCallibrate ();
 
 	send ( "Hello World!" );
+	fm24clxx_read_test ();
 	while ( 1 )
 	{
 	}

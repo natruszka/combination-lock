@@ -27,10 +27,11 @@ uint8_t fm24clxx_read_test ( void )
     inc = ( ( uint16_t )type + 1 ) / 8;
     for ( i = 0; i < 8; i++ )
     {
-        for ( j = 0; j < 12; j++ )
+        for ( j = 0; j < 11; j++ )
         {
             buf[j] = ( uint8_t )( 'A' + j );
         }
+				buf[11] = '\0';
         fm24clxx_interface_debug_print ( "fm24clxx: write %d bytes of data to address 0x%04X.", 12, i * inc );
         /* write data */
         res = fm24clxx_fram_write ( i * inc, ( uint8_t* )buf, 12 );
@@ -67,7 +68,6 @@ uint8_t fm24clxx_read_test ( void )
 
     /* finish read test */
     fm24clxx_interface_debug_print ( "fm24clxx: finish read test." );
-    fm24clxx_fram_deinit ();
 
     return 0;
 }
