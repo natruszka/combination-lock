@@ -24,7 +24,7 @@ void lcdServisCode ( void );
 void lcdNewCode ( void );
 void lcdNewServiceCode ( void );
 void lcdInsertPassword ( void );
-bool checkCode ( const char* code, int len, const char correctCode[], int correctLen );
+bool checkCode ( const uint8_t* code, int len, const uint8_t correctCode[], int correctLen );
 void lcdClearInput ( void );
 void lcdDisplayDate ( const char* date );
 void lcdHandler ( int x, int y );

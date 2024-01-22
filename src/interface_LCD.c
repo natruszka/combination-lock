@@ -3,10 +3,14 @@
 #include "asciiLib.h"
 #include "GPIO_LPC17xx.h"
 #include "touchscreen_LCD.h"
+#include "fm24clxx.h"
 
 #include <stdbool.h>
 #include <string.h>
 #include <stdlib.h>
+
+#define USER_PASS_ADDR (0x0000)
+#define SERVICE_PASS_ADDR (0x0004)
 
 #ifdef __DEBUG__
 #include "UART.h"
@@ -26,7 +30,20 @@ extern float D;
 extern float E;
 extern float F;
 
+int passpos;
+
 static bool isService;
+
+static void touchpanelDelayUS ( uint32_t cnt )
+{
+	volatile uint32_t i;
+	for ( i = 0; i < cnt; i++ )
+	{
+		volatile uint8_t us = 12; /*  */
+		while ( us-- )
+			;
+	}
+}
 
 void lcdWriteChar ( uint16_t x_start, uint16_t y_start, unsigned char letter[16] )
 {
@@ -185,48 +202,48 @@ void lcdClearInput ( void )
 
 void lcdDisplayCode ( char letter, bool isBackspace, bool isEnter )
 {
-    static int pos;
-    static char code[4];
+    static uint8_t code[4];
     unsigned char buffer[16] = { '\0' };
-    char correctCode[4] = { '1','2','3','4' }; //HASLO POWINNO BYC WCZYTANE Z PAMIECI
+    uint8_t correctCode[4];
+		fm24clxx_fram_read ( USER_PASS_ADDR, correctCode, 4 );
 #ifdef __DEBUG__
     char buf_uart[2];
     buf_uart[0] = letter;
     buf_uart[1] = '\0';
     send ( buf_uart );
 #endif
-    for ( int i = 0; i < 4; i++ )
-    {
-        correctCode[i] = '1'; //HASLO SERWISOWE WCZYTANE Z PAMIECI
-    }
+		if(isService)
+		{
+			fm24clxx_fram_read ( SERVICE_PASS_ADDR, correctCode, 4 );
+		}
     if ( isBackspace )
     {
-        if ( pos == 0 )
+        if ( passpos == 0 )
             return;
-        pos--;
+        passpos--;
         GetASCIICode ( 0, buffer, '_' );
-        lcdWriteChar ( xFirstRow + ( uint16_t )pos * 8, yFirstRow / 2 - 4, buffer );
+        lcdWriteChar ( xFirstRow + ( uint16_t )passpos * 8, yFirstRow / 2 - 4, buffer );
         return;
     }
 
     if ( isEnter )
     {
-        checkCode ( code, pos, correctCode, 4 );
-        pos = 0;
+        checkCode ( code, passpos, correctCode, 4 );
+        passpos = 0;
         lcdClearInput ();
         return;
     }
 
-    if ( pos < 4 )
+    if ( passpos < 4 )
     {
-        code[pos] = letter;
+        code[passpos] = letter;
         GetASCIICode ( 0, buffer, '*' );
-        lcdWriteChar ( xFirstRow + ( uint16_t )pos * 8, yFirstRow / 2 - 4, buffer );
+        lcdWriteChar ( xFirstRow + ( uint16_t )passpos * 8, yFirstRow / 2 - 4, buffer );
     }
 
-    if ( ++pos >= 4 )
+    if ( ++passpos >= 4 )
     {
-        pos = 4;
+        passpos = 4;
         return;
     }
 }
@@ -237,11 +254,13 @@ void lcdDisplayInfo ( bool isOpen )
     {
         lcdWriteString ( "OPEN    ", xSecondRow, 8 );
         GPIO_PinWrite ( 0, 26, 1 );
+				touchpanelDelayUS(20000);
         RTC_ShowOpenDate ();
     }
     else
     {
         GPIO_PinWrite ( 0, 26, 0 );
+				touchpanelDelayUS(20000);
         lcdWriteString ( "CLOSED  ", xSecondRow, 8 );
     }
 }
@@ -256,21 +275,24 @@ void lcdServisCode ( void )
 void lcdNewCode ( void )
 {
     lcdWriteString ( "Podaj kod serwisowy     ", 0, 32 );
-    lcdGetServiceCode ();
+    while(!lcdGetServiceCode ());
+		lcdWriteString ( "Podaj nowe haslo        ", 0, 32 );
+		lcdNewPassword(false);
 }
 
 void lcdNewServiceCode ( void )
 {
     lcdWriteString ( "Podaj stary kod serwisowy", 0, 32 );
-    lcdGetServiceCode ();
-
+    while(!lcdGetServiceCode ());
+		lcdWriteString ( "Podaj nowy kod serwisowy ", 0, 32 );
+		lcdNewPassword(true);
 }
 void lcdInsertPassword ( void )
 {
     lcdWriteString ( "Podaj haslo              ", 0, 32 );
 }
 
-bool checkCode ( const char* code, int len, const char correctCode[], int correctLen )
+bool checkCode ( const uint8_t* code, int len, const uint8_t correctCode[], int correctLen )
 {
     static int failureCount;
     bool isOpen = true;
@@ -306,7 +328,7 @@ bool checkCode ( const char* code, int len, const char correctCode[], int correc
 
 void lcdDisplayDate ( const char* date )
 {
-    lcdWriteString ( date, 0, 8 ); // test pozycji
+    lcdWriteString ( date, 0, 8 ); 
 }
 
 void lcdHandler ( int x, int y )
@@ -381,9 +403,6 @@ char lcdGetChar ( int x, int y, bool showChar, int pos )
     float xd = ( float )x * A + ( float )y * B + C;
     float yd = ( float )x * D + ( float )y * E + F;
     unsigned char buffer[16] = { '\0' };
-#ifdef __DEBUG__
-    send ( "test" );
-#endif
     if ( yd > yFirstRow )
     {
         if ( xd < xFirstRow )

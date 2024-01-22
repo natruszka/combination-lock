@@ -15,6 +15,7 @@
 #define SERVICE_PASS ("1111")
 #define SERVICE_PASS_ADDR (0x0004)
 #endif
+extern int passpos;
 
 static void touchpanelDelayUS ( uint32_t cnt )
 {
@@ -29,11 +30,11 @@ static void touchpanelDelayUS ( uint32_t cnt )
 }
 int main ( void )
 {
-	//	int x = 0;
-	//	int	y = 0;
-	//	int insertpass = 0;
-	//	int changepass = 0; //Dla 1 zmieniamy haslo, dla 2 zmieniamy kod serwisowy
-	//	uint32_t keys, key1, key2;
+	int x = 0;
+	int	y = 0;
+	int insertpass = 0;
+	int changepass = 0; //Dla 1 zmieniamy haslo, dla 2 zmieniamy kod serwisowy
+	uint32_t keys, key1, key2;
 	int res = 0;
 	uint8_t buff[5] = { '\0' };
 
@@ -60,28 +61,24 @@ int main ( void )
 #endif
 	}
 #endif
-	//	Buttons_Initialize ();
-	//	PIN_Configure ( 0, 26, 0, 2, 0 );
-	//	GPIO_PinWrite ( 0, 26, 1 );
-	//	touchpanelDelayUS ( 1000 );
-	//	GPIO_PinWrite ( 0, 26, 0 );
-	//	touchpanelInit ();
-	//	lcdConfiguration ();
-	//	init_ILI9325 ();
-	//	lcdWriteReg ( ADRX_RAM, 0 );
-	//	lcdWriteReg ( ADRY_RAM, 0 );
-	//	lcdWriteIndex ( DATA_RAM );
-	//	touchpanelDelayUS ( 40 );
-	//	touchpanelDelayUS ( 40 );
-	//	for ( int register i = 0; i < LCD_MAX_X * LCD_MAX_Y; i++ )
-	//	{
-	//		lcdWriteData ( LCDBlueSea );
-	//	}
-	//	lcdDrawConfigTouchpanel ();
-	//	//	lcdTouchscreenCallibrate ();
-	//	lcdDrawInterface ();
-	//	//p026
-	//	RTC_Configuration ();
+		Buttons_Initialize ();
+		PIN_Configure ( 0, 26, 0, 2, 0 );
+		touchpanelInit ();
+		lcdConfiguration ();
+		init_ILI9325 ();
+		lcdWriteReg ( ADRX_RAM, 0 );
+		lcdWriteReg ( ADRY_RAM, 0 );
+		lcdWriteIndex ( DATA_RAM );
+		touchpanelDelayUS ( 40 );
+		touchpanelDelayUS ( 40 );
+		for ( int register i = 0; i < LCD_MAX_X * LCD_MAX_Y; i++ )
+		{
+			lcdWriteData ( LCDBlueSea );
+		}
+		lcdDrawConfigTouchpanel ();
+		lcdTouchscreenCallibrate ();
+		lcdDrawInterface ();
+		RTC_Configuration ();
 		//	LPC_RTC->DOM = 7;   // Update date value 
 		//	LPC_RTC->MONTH = 1;   // Update month value
 		//	LPC_RTC->YEAR = 2024; // Update year value
@@ -100,48 +97,50 @@ int main ( void )
 #endif
 	while ( 1 )
 	{
-		//		keys = Buttons_GetState ();
-		//		key1 = keys & 0x01;
-		//		key2 = keys & 0x02;
-		//		if ( key1 )
-		//		{
-		//			insertpass = 1;
-		//			changepass = 0;
-		//		}
-		//		if ( key2 )
-		//		{
-		//			insertpass = 0;
-		//			changepass++;
-		//			if ( changepass > 2 )
-		//			{
-		//				changepass = 0;
-		//			}
-		//		}
-		//		if ( insertpass )
-		//		{
-		//			lcdInsertPassword ();
-		//			lcdTouchscreenGetCoords ( &x, &y );
-		//			touchpanelDelayUS ( 500000 );
-		//		}
-		//		//W PONIZSZYCH FUNKCJACH BRAKUJE WCZYTANIA NOWEGO HASLA
-		//		//W TYM CELU NALEZY UZYC FUNKCJI LCDGETCHAR I ZAIMPLEMENTOWAC ZCZYTYWANIE Z INPUTU
-		//		//- TAK SAMO JAK PRZY WCZYTYWANIU STAREGO KODU SERWISOWEGO LUB KALIBRACJI 
-		//		//lcdTouchscreenGetPassword - POBIERANIE CHARU Z EKRANU 
-		//		//lcdTouchscreenCallibrate - POBIERANIE Z INPUTU
-		//		else if ( changepass == 1 )
-		//		{
-		//			lcdNewCode ();
-		//#ifdef __DEBUG__
-		//			send ( "zmiana hasla" );
-		//#endif
-		//		}
-		//		else if ( changepass == 2 )
-		//		{
-		//			lcdNewServiceCode ();
-		//#ifdef __DEBUG__
-		//			send ( "zmiana hasla serwisowego" );
-		//#endif
-		//		}
-		//		touchpanelDelayUS ( 200000 );
+		keys = Buttons_GetState ();
+		key1 = keys & 0x01;
+		key2 = keys & 0x02;
+		if ( key1 )
+		{
+			insertpass = 1;
+			changepass = 0;
+		}
+		if ( key2 )
+		{
+			insertpass = 0;
+			changepass++;
+			if ( changepass > 2 )
+			{
+				changepass = 0;
+			}
+		}
+		if ( insertpass )
+		{
+			lcdInsertPassword ();
+			lcdTouchscreenGetCoords ( &x, &y );
+			touchpanelDelayUS ( 500000 );
+		}
+		else if ( changepass == 1 )
+		{
+			#ifdef __DEBUG__
+			send ( "zmiana hasla" );
+			#endif
+			lcdNewCode ();
+			changepass = 0;
+			insertpass = 1;
+			passpos = 0;
+
+		}
+		else if ( changepass == 2 )
+		{
+			#ifdef __DEBUG__
+			send ( "zmiana hasla serwisowego" );
+		#endif
+			lcdNewServiceCode ();
+			changepass = 0;
+			insertpass = 1;
+			passpos = 0;
+		}
+		touchpanelDelayUS ( 200000 );
 	}
 }

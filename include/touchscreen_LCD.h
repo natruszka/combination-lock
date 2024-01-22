@@ -15,7 +15,8 @@
 void lcdTouchscreenGetCoords ( int* x, int* y );
 char lcdTouchscreenGetPassword ( int* x, int* y, bool showChar, int pos );
 void lcdTouchscreenCallibrate ( void );
-void lcdGetServiceCode ( void );
+bool lcdGetServiceCode ( void );
+void lcdNewPassword(bool isService);
 int getMin ( int cords[], int len );
 int getMax ( int cords[], int len );
 int average ( int cords[], int len );

@@ -1,4 +1,8 @@
 #include "touchscreen_LCD.h"
+#include "fm24clxx.h"
+
+#define SERVICE_PASS_ADDR (0x0004)
+#define USER_PASS_ADDR (0x0000)
 
 float A;
 float B;
@@ -139,35 +143,76 @@ void calculateConstants ( int x[], int y[], int len )
 	isConf = true;
 }
 
-void lcdGetServiceCode ( void )
+bool lcdGetServiceCode ( void )
 {
+	bool res = false;
 	static int pos;
-	int x = 0;
-	int y = 0;
-	char code[4];
-	char correctCode[4] = { '1','1','1','1' }; // POPRAWNY KOD POWINEN BYC WCZYTANY Z PAMIECI 
+	int x;
+	int y;
+	uint8_t code[4];
+	uint8_t correctCode[4];
+	fm24clxx_fram_read ( SERVICE_PASS_ADDR, correctCode, 4 );
 	for ( int i = 0; i < 4; i++ )
 	{
 #ifdef __DEBUG__
 		send ( "czekam na haslo" );
 #endif
-		code[i] = lcdTouchscreenGetPassword ( &x, &y, true, pos );
+		code[i] = (uint8_t)lcdTouchscreenGetPassword ( &x, &y, true, pos );
 		touchpanelDelayUS ( 500000 );
 		pos++;
 	}
-	if ( checkCode ( code, 4, correctCode, 4 ) )
+	res = checkCode ( code, 4, correctCode, 4 );
+	if ( res )
 	{
-		lcdWriteString ( "DOBRY KOD", 150, 8 );
+		lcdWriteString ( "OK    ", 160, 8 );
 		lcdClearInput ();
 	}
 	else
 	{
-		lcdWriteString ( "ZLY   KOD", 150, 8 );
+		lcdWriteString ( "WRONG ", 160, 8 );
 		lcdClearInput ();
 	}
 	pos = 0;
+	return res;
 }
 
+void lcdNewPassword(bool isService)
+{
+	static int pos;
+	int x;
+	int y;
+	int res;
+	uint8_t code[4];
+	#ifdef __DEBUG__
+		send ( "czekam na nowe haslo" );
+#endif
+	for ( int i = 0; i < 4; i++ )
+	{
+		code[i] = (uint8_t)lcdTouchscreenGetPassword ( &x, &y, true, pos );
+		touchpanelDelayUS ( 500000 );
+		pos++;
+	}
+	if(isService)
+	{
+		res = fm24clxx_fram_write ( SERVICE_PASS_ADDR, code, 4 );
+	}
+	else
+	{
+		res = fm24clxx_fram_write ( USER_PASS_ADDR, code, 4 );
+	}
+		pos = 0;
+	#ifdef __DEBUG__
+	if(res)
+	{
+		send ( "Nie ustawiono nowego hasla" );
+	}
+	else
+		{
+		send ( "Ustawiono nowe haslo" );
+	}
+#endif
+	lcdClearInput();
+}
 void lcdTouchscreenCallibrate ( void )
 {
 	int x_arr[30];
