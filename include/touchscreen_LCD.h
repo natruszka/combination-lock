@@ -6,14 +6,19 @@
 #include "TP_Open1768.h"
 #include "interface_LCD.h"
 
+#include <stdbool.h>
+
+#ifdef __DEBUG__
 #include "UART.h"
+#endif
 
 void lcdTouchscreenGetCoords ( int* x, int* y );
-char lcdTouchscreenGetPassword(int *x, int *y, bool showChar, int pos);
+char lcdTouchscreenGetPassword ( int* x, int* y, bool showChar, int pos );
 void lcdTouchscreenCallibrate ( void );
-void lcdGetServiceCode(void);
-int getMin(int cords[], int len);
-int getMax(int cords[], int len);
-int average(int cords[], int len);
-void calculateConstants(int x[], int y[], int len);
+void lcdGetServiceCode ( void );
+int getMin ( int cords[], int len );
+int getMax ( int cords[], int len );
+int average ( int cords[], int len );
+void calculateConstants ( int x[], int y[], int len );
+
 #endif // LCD_TOUCHSCREEN_H

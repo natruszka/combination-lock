@@ -89,7 +89,7 @@ void lcdSend ( uint16_t byte )
 *******************************************************************************/
 __INLINE void wait_delay ( int count )
 {
-   volatile unsigned int tmp = ( unsigned int ) count;
+   volatile unsigned int tmp = ( unsigned int )count;
    while ( tmp-- );
 }
 
@@ -104,7 +104,7 @@ uint16_t lcdRead ( void )
 {
    uint16_t valLSB, valMSB;
 
-   LPC_GPIO2->FIODIR &= ~( unsigned int ) ( 0xFF );         /* P2.0...P2.7 Input */
+   LPC_GPIO2->FIODIR &= ~( unsigned int )( 0xFF );         /* P2.0...P2.7 Input */
    LCD_DIR ( 0 )                           /* Interface B->A */
       LCD_EN ( 0 )                            /* Enable 2B->2A */
       wait_delay ( 50 );                       /* delay some times */
@@ -114,7 +114,7 @@ uint16_t lcdRead ( void )
    //value = (value << 8) |
    valLSB = LPC_GPIO2->FIOPIN0;          /* Read D0..D7 */
    LCD_DIR ( 1 )
-      return  ( uint16_t ) ( valMSB << ( uint16_t ) ( 8 | valLSB ) );
+      return  ( uint16_t )( valMSB << ( uint16_t )( 8 | valLSB ) );
 }
 
 /*******************************************************************************

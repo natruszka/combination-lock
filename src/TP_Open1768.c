@@ -21,7 +21,7 @@ static uint8_t touchpanelWriteCmd ( uint8_t cmd )
 		; /* Wait for transfer to finish */
 	while ( !( LPC_SSP1->SR & ( 1 << SSPSR_RNE ) ) )
 		; /* Wait until the Rx FIFO is not empty */
-	byte_r = ( uint8_t ) LPC_SSP1->DR;
+	byte_r = ( uint8_t )LPC_SSP1->DR;
 
 	return byte_r; /* Return received value */
 }
@@ -31,7 +31,7 @@ static int touchpanelReadAddress ( void )
 	unsigned short buf, temp;
 
 	temp = touchpanelWriteCmd ( 0x00 );
-	buf = ( unsigned short ) ( temp << 8 );
+	buf = ( unsigned short )( temp << 8 );
 	touchpanelDelayUS ( 1 );
 	temp = touchpanelWriteCmd ( 0x00 );
 	buf |= temp;
@@ -96,7 +96,7 @@ static void touchpanelDriverDataBusInit ( void )
 	LPC_PINCON->PINSEL0 |= ( 2UL << 14 ) | ( 2UL << 16 ) | ( 2UL << 18 ); /* P0.7 SCK1,P0.8 MISO1,P0.9 MOSI1 */
 
 	/* PCLK_SSP1=CCLK */
-	LPC_SC->PCLKSEL0 &= ( unsigned int ) ~( 3 << 20 ); /* PCLKSP0 = CCLK/4 (18MHz) */
+	LPC_SC->PCLKSEL0 &= ( unsigned int )~( 3 << 20 ); /* PCLKSP0 = CCLK/4 (18MHz) */
 	LPC_SC->PCLKSEL0 |= ( 1 << 20 ); /* PCLKSP0 = CCLK   (72MHz) */
 
 	LPC_SSP1->CR0 = 0x0007; /* 8Bit, CPOL=0, CPHA=0         */
@@ -119,7 +119,7 @@ static void touchpanelDriverDataBusInit ( void )
 void touchpanelInit ( void )
 {
 	LPC_GPIO0->FIODIR |= PIN_TP_CS; /* P0.6 CS is output */
-	LPC_GPIO0->FIODIR &= ( unsigned int ) ~PIN_TP_INT; /* P0.19 TP_INT is input */
+	LPC_GPIO0->FIODIR &= ( unsigned int )~PIN_TP_INT; /* P0.19 TP_INT is input */
 	TP_CS ( 1 )
 		touchpanelDriverDataBusInit ();
 }

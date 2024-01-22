@@ -70,50 +70,66 @@ uint8_t fm24clxx_init ( fm24clxx_handle_t* handle )
     }
     if ( handle->iic_init == NULL )                                               /* check iic_init */
     {
+#ifdef __DEBUG__
         handle->debug_print ( "fm24clxx: iic_init is null.\n" );                   /* iic_init is null */
+#endif
 
         return 3;                                                               /* return error */
     }
     if ( handle->iic_deinit == NULL )                                             /* check iic_deinit */
     {
+#ifdef __DEBUG__
         handle->debug_print ( "fm24clxx: iic_deinit is null.\n" );                 /* iic_deinit is null */
+#endif
 
         return 3;                                                               /* return error */
     }
     if ( handle->iic_read == NULL )                                               /* check iic_read */
     {
+#ifdef __DEBUG__
         handle->debug_print ( "fm24clxx: iic_read is null.\n" );                   /* iic_read is null */
+#endif
 
         return 3;                                                               /* return error */
     }
     if ( handle->iic_write == NULL )                                              /* check iic_write */
     {
+#ifdef __DEBUG__
         handle->debug_print ( "fm24clxx: iic_write is null.\n" );                  /* iic_write is null */
+#endif
 
         return 3;                                                               /* return error */
     }
     if ( handle->iic_read_address16 == NULL )                                     /* check iic_read_address16 */
     {
+#ifdef __DEBUG__
         handle->debug_print ( "fm24clxx: iic_read_address16 is null.\n" );         /* iic_read_address16 is null */
+#endif
 
         return 3;                                                               /* return error */
     }
     if ( handle->iic_write_address16 == NULL )                                    /* check iic_write_address16 */
     {
+#ifdef __DEBUG__
         handle->debug_print ( "fm24clxx: iic_write_address16 is null.\n" );        /* iic_write_address16 is null */
+#endif
 
         return 3;                                                               /* return error */
     }
     if ( handle->delay_ms == NULL )                                               /* check delay_ms */
     {
+#ifdef __DEBUG__
         handle->debug_print ( "fm24clxx: delay_ms is null.\n" );                   /* delay_ms is null */
+#endif
 
         return 3;                                                               /* return error */
     }
 
     if ( handle->iic_init () != 0 )                                                /* iic init */
     {
+#ifdef __DEBUG__
         handle->debug_print ( "fm24clxx: iic init failed.\n" );                    /* iic init failed */
+#endif
 
         return 1;                                                               /* return error */
     }
@@ -145,7 +161,9 @@ uint8_t fm24clxx_deinit ( fm24clxx_handle_t* handle )
 
     if ( handle->iic_deinit () != 0 )                                    /* iic deinit */
     {
+        #ifdef __DEBUG__
         handle->debug_print ( "fm24clxx: iic deinit failed.\n" );        /* iic deinit failed */
+        #endif
 
         return 1;                                                     /* return error */
     }
@@ -170,7 +188,7 @@ uint8_t fm24clxx_set_type ( fm24clxx_handle_t* handle, fm24clxx_t type )
         return 2;                       /* return error */
     }
 
-    handle->id = ( uint16_t ) type;        /* set id */
+    handle->id = ( uint16_t )type;        /* set id */
 
     return 0;                           /* success return 0 */
 }
@@ -191,7 +209,7 @@ uint8_t fm24clxx_get_type ( fm24clxx_handle_t* handle, fm24clxx_t* type )
         return 2;                            /* return error */
     }
 
-    *type = ( fm24clxx_t ) ( handle->id );        /* get id */
+    *type = ( fm24clxx_t )( handle->id );        /* get id */
 
     return 0;                                /* success return 0 */
 }
@@ -212,7 +230,7 @@ uint8_t fm24clxx_set_addr_pin ( fm24clxx_handle_t* handle, fm24clxx_address_t ad
         return 2;                             /* return error */
     }
 
-    handle->iic_addr = 0xA0;                  /* set iic addr */
+    handle->iic_addr = ( uint8_t )( 0xA0 >> 1 );  /* set iic addr (modified because of CMSIS I2C driver specification*/
     handle->iic_addr |= addr_pin << 1;        /* set iic address */
 
     return 0;                                 /* success return 0 */
@@ -234,7 +252,7 @@ uint8_t fm24clxx_get_addr_pin ( fm24clxx_handle_t* handle, fm24clxx_address_t* a
         return 2;                                                               /* return error */
     }
 
-    *addr_pin = ( fm24clxx_address_t ) ( ( handle->iic_addr & ( ~0xA0 ) ) >> 1 );        /* get iic address */
+    *addr_pin = ( fm24clxx_address_t )( ( handle->iic_addr & ( ~0xA0 ) ) >> 1 );        /* get iic address */
 
     return 0;                                                                   /* success return 0 */
 }
@@ -266,24 +284,28 @@ uint8_t fm24clxx_read ( fm24clxx_handle_t* handle, uint16_t address, uint8_t* bu
         return 3;                                                                                            /* return error */
     }
 
-    if ( ( uint16_t ) ( address + len ) > handle->id )                                                              /* check length */
+    if ( ( uint16_t )( address + len ) > handle->id )                                                              /* check length */
     {
+#ifdef __DEBUG__
         handle->debug_print ( "fm24clxx: read out of range.\n" );                                               /* read out of range */
+#endif
 
         return 4;                                                                                            /* return error */
     }
-    page_remain = ( uint8_t ) ( 8 - address % 8 );                                                                /* get page remain */
+    page_remain = ( uint8_t )( 8 - address % 8 );                                                                /* get page remain */
     if ( len <= page_remain )                                                                                  /* page remain */
     {
-        page_remain = ( uint8_t ) len;                                                                          /* set page remain */
+        page_remain = ( uint8_t )len;                                                                          /* set page remain */
     }
-    if ( handle->id > ( uint16_t ) FM24CL16B )                                                                    /* choose id to set different address */
+    if ( handle->id > ( uint16_t )FM24CL16B )                                                                    /* choose id to set different address */
     {
         while ( 1 )
         {
             if ( handle->iic_read_address16 ( handle->iic_addr, address, buf, page_remain ) != 0 )                /* read data */
             {
+#ifdef __DEBUG__
                 handle->debug_print ( "fm24clxx: read failed.\n" );                                             /* read failed */
+#endif
 
                 return 1;                                                                                    /* return error */
             }
@@ -298,7 +320,7 @@ uint8_t fm24clxx_read ( fm24clxx_handle_t* handle, uint16_t address, uint8_t* bu
                 len -= page_remain;                                                                          /* length decrease */
                 if ( len < 8 )                                                                                 /* check length */
                 {
-                    page_remain = ( uint8_t ) len;                                                              /* set the reset length */
+                    page_remain = ( uint8_t )len;                                                              /* set the reset length */
                 }
                 else
                 {
@@ -311,10 +333,12 @@ uint8_t fm24clxx_read ( fm24clxx_handle_t* handle, uint16_t address, uint8_t* bu
     {
         while ( 1 )
         {
-            if ( handle->iic_read ( ( uint8_t ) ( handle->iic_addr + ( ( address / 256 ) << 1 ) ), ( uint8_t ) ( address % 256 ), buf,
+            if ( handle->iic_read ( ( uint8_t )( handle->iic_addr + ( ( address / 256 ) << 1 ) ), ( uint8_t )( address % 256 ), buf,
                  page_remain ) != 0 )                                                                           /* read page */
             {
+#ifdef __DEBUG__
                 handle->debug_print ( "fm24clxx: read failed.\n" );                                             /* read failed */
+#endif
 
                 return 1;                                                                                    /* return error */
             }
@@ -329,7 +353,7 @@ uint8_t fm24clxx_read ( fm24clxx_handle_t* handle, uint16_t address, uint8_t* bu
                 len -= page_remain;                                                                          /* length decrease */
                 if ( len < 8 )                                                                                 /* check length */
                 {
-                    page_remain = ( uint8_t ) len;                                                              /* set the reset length */
+                    page_remain = ( uint8_t )len;                                                              /* set the reset length */
                 }
                 else
                 {
@@ -369,24 +393,28 @@ uint8_t fm24clxx_write ( fm24clxx_handle_t* handle, uint16_t address, uint8_t* b
         return 3;                                                                                             /* return error */
     }
 
-    if ( ( uint16_t ) ( address + len ) > handle->id )                                                               /* check length */
+    if ( ( uint16_t )( address + len ) > handle->id )                                                               /* check length */
     {
+#ifdef __DEBUG__
         handle->debug_print ( "fm24clxx: write out of range.\n" );                                               /* write out of range */
+#endif
 
         return 1;                                                                                             /* return error */
     }
-    page_remain = ( uint8_t ) ( 8 - address % 8 );                                                                 /* set page remain */
+    page_remain = ( uint8_t )( 8 - address % 8 );                                                                 /* set page remain */
     if ( len <= page_remain )                                                                                   /* check length */
     {
-        page_remain = ( uint8_t ) len;                                                                           /* set page remain */
+        page_remain = ( uint8_t )len;                                                                           /* set page remain */
     }
-    if ( handle->id > ( uint16_t ) FM24CL16B )                                                                     /* check id */
+    if ( handle->id > ( uint16_t )FM24CL16B )                                                                     /* check id */
     {
         while ( 1 )
         {
             if ( handle->iic_write_address16 ( handle->iic_addr, address, buf, page_remain ) != 0 )                /* write data */
             {
+#ifdef __DEBUG__
                 handle->debug_print ( "fm24clxx: write failed.\n" );                                             /* write failed */
+#endif
 
                 return 1;                                                                                     /* return error */
             }
@@ -401,7 +429,7 @@ uint8_t fm24clxx_write ( fm24clxx_handle_t* handle, uint16_t address, uint8_t* b
                 len -= page_remain;                                                                           /* length decrease */
                 if ( len < 8 )                                                                                  /* check length */
                 {
-                    page_remain = ( uint8_t ) len;                                                               /* set the reset length */
+                    page_remain = ( uint8_t )len;                                                               /* set the reset length */
                 }
                 else
                 {
@@ -414,15 +442,21 @@ uint8_t fm24clxx_write ( fm24clxx_handle_t* handle, uint16_t address, uint8_t* b
     {
         while ( 1 )
         {
+#ifdef __DEBUG__
             handle->debug_print ( "fm24clxx: write address: 0x%04X, data: 0x%02X, len: %d.", address, *buf, page_remain );
-            if ( handle->iic_write ( ( uint8_t ) ( handle->iic_addr + ( ( address / 256 ) << 1 ) ), ( uint8_t ) ( address % 256 ), buf,
+#endif
+            if ( handle->iic_write ( ( uint8_t )( handle->iic_addr + ( ( address / 256 ) << 1 ) ), ( uint8_t )( address % 256 ), buf,
                  page_remain ) != 0 )                                                                            /* write page */
             {
+#ifdef __DEBUG__
                 handle->debug_print ( "fm24clxx: write failed.\n" );                                             /* write failed */
+#endif
 
                 return 1;                                                                                     /* return error */
             }
+#ifdef __DEBUG__
             handle->debug_print ( "fm24clxx: wrote address: 0x%04X, data: 0x%02X, len: %d.", address, *buf, page_remain );
+#endif
             if ( page_remain == len )                                                                           /* check break */
             {
                 break;                                                                                        /* break */
@@ -434,14 +468,16 @@ uint8_t fm24clxx_write ( fm24clxx_handle_t* handle, uint16_t address, uint8_t* b
                 len -= page_remain;                                                                           /* length decrease */
                 if ( len < 8 )                                                                                  /* check length */
                 {
-                    page_remain = ( uint8_t ) len;                                                               /* set the rest length */
+                    page_remain = ( uint8_t )len;                                                               /* set the rest length */
                 }
                 else
                 {
                     page_remain = 8;                                                                          /* set page */
                 }
             }
+#ifdef __DEBUG__
             handle->debug_print ( "fm24clxx: incremented address: 0x%04X, data: 0x%02X, len: %d.", address, *buf, page_remain );
+#endif
         }
     }
 

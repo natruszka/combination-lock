@@ -1,6 +1,8 @@
 #include "UART.h"
 #include "string.h"
 
+#ifdef __DEBUG__
+
 void send ( const char* str )
 {
     int i = 0;
@@ -28,3 +30,5 @@ void UART_init ( void )
     LPC_UART0->LCR = 3;
     LPC_UART0->FCR = 1;
 }
+
+#endif

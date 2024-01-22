@@ -1,4 +1,7 @@
 #include "i2c.h"
+#include "UART.h"
+#include "delay.h"
+#include "GPIO_LPC17xx.h"
 #include <string.h>
 
 extern ARM_DRIVER_I2C Driver_I2C0;
@@ -20,13 +23,13 @@ void i2c0_deinit ( void )
 uint8_t i2c0_read ( uint8_t addr, uint8_t reg, uint8_t* buf, uint32_t len )
 {
 	int status;
-	uint8_t msg[2];
+	uint8_t msg[1];
 
-	msg[0] = addr;
-	msg[1] = reg;
+	msg[0] = reg;
 
-	status = I2Cdrv->MasterTransmit ( addr, msg, 2, false );
-	if (status != 0)
+
+	status = I2Cdrv->MasterTransmit ( addr, msg, 1, false );
+	if ( status != 0 )
 	{
 		// could not initiate transmission
 		return 1;
@@ -40,6 +43,8 @@ uint8_t i2c0_read ( uint8_t addr, uint8_t reg, uint8_t* buf, uint32_t len )
 		return 3;
 	}
 
+
+
 	status = I2Cdrv->MasterReceive ( addr, buf, len, false );
 	if ( status != 0 )
 	{
@@ -49,7 +54,7 @@ uint8_t i2c0_read ( uint8_t addr, uint8_t reg, uint8_t* buf, uint32_t len )
 
 	while ( I2Cdrv->GetStatus ().busy );
 
-	if ( I2Cdrv->GetDataCount () != ( int ) len )
+	if ( I2Cdrv->GetDataCount () != ( int )len )
 	{
 		// Data count mismatch
 		return 3;
@@ -61,14 +66,15 @@ uint8_t i2c0_read ( uint8_t addr, uint8_t reg, uint8_t* buf, uint32_t len )
 uint8_t i2c0_read_address16 ( uint8_t addr, uint16_t reg, uint8_t* buf, uint32_t len )
 {
 	int status;
-	uint8_t msg[3];
+	uint8_t msg[2];
 
-	msg[0] = addr;
-	msg[1] = ( reg >> 8 ) & 0xFF;
-	msg[2] = reg & 0xFF;
+	msg[0] = ( reg >> 8 ) & 0xFF;
+	msg[1] = reg & 0xFF;
 
-	status = I2Cdrv->MasterTransmit ( addr, msg, 3, false );
-	if (status != 0)
+
+
+	status = I2Cdrv->MasterTransmit ( addr, msg, 2, false );
+	if ( status != 0 )
 	{
 		// could not initiate transmission
 		return 1;
@@ -76,11 +82,13 @@ uint8_t i2c0_read_address16 ( uint8_t addr, uint16_t reg, uint8_t* buf, uint32_t
 
 	while ( I2Cdrv->GetStatus ().busy );
 
-	if ( I2Cdrv->GetDataCount () != 1 )
+	if ( I2Cdrv->GetDataCount () != 2 )
 	{
 		// Data count mismatch
 		return 3;
 	}
+
+
 
 	status = I2Cdrv->MasterReceive ( addr, buf, len, false );
 	if ( status != 0 )
@@ -91,7 +99,7 @@ uint8_t i2c0_read_address16 ( uint8_t addr, uint16_t reg, uint8_t* buf, uint32_t
 
 	while ( I2Cdrv->GetStatus ().busy );
 
-	if ( I2Cdrv->GetDataCount () != ( int ) len )
+	if ( I2Cdrv->GetDataCount () != ( int )len )
 	{
 		// Data count mismatch
 		return 3;
@@ -104,14 +112,15 @@ uint8_t i2c0_write ( uint8_t addr, uint8_t reg, uint8_t* buf, uint32_t len )
 {
 	int status;
 
-	uint8_t msg[len + 2];
+	uint8_t msg[len + 1];
 
-	msg[0] = addr;
-	msg[1] = reg;
-	memcpy(msg + 2, buf, len);
+	msg[0] = reg;
+	memcpy ( msg + 1, buf, len );
 
-	status = I2Cdrv->MasterTransmit ( addr, msg, len + 2, false );
-	if (status != 0)
+
+
+	status = I2Cdrv->MasterTransmit ( addr, msg, len + 1, false );
+	if ( status != 0 )
 	{
 		// could not initiate transmission
 		return 1;
@@ -119,7 +128,7 @@ uint8_t i2c0_write ( uint8_t addr, uint8_t reg, uint8_t* buf, uint32_t len )
 
 	while ( I2Cdrv->GetStatus ().busy );
 
-	if ( I2Cdrv->GetDataCount () != 1 )
+	if ( I2Cdrv->GetDataCount () != ( int )len + 1 )
 	{
 		// mismatch in data count
 		return 3;
@@ -131,15 +140,16 @@ uint8_t i2c0_write ( uint8_t addr, uint8_t reg, uint8_t* buf, uint32_t len )
 uint8_t i2c0_write_address16 ( uint8_t addr, uint16_t reg, uint8_t* buf, uint32_t len )
 {
 	int status;
-	uint8_t msg[len + 3];
+	uint8_t msg[len + 2];
 
-	msg[0] = addr;
-	msg[1] = ( reg >> 8 ) & 0xFF;
-	msg[2] = reg & 0xFF;
-	memcpy(msg + 3, buf, len);
+	msg[0] = ( reg >> 8 ) & 0xFF;
+	msg[1] = reg & 0xFF;
+	memcpy ( msg + 2, buf, len );
 
-	status = I2Cdrv->MasterTransmit ( addr, msg, len + 3, false );
-	if (status != 0)
+
+
+	status = I2Cdrv->MasterTransmit ( addr, msg, len + 2, false );
+	if ( status != 0 )
 	{
 		// could not initiate transmission
 		return 1;
@@ -147,7 +157,7 @@ uint8_t i2c0_write_address16 ( uint8_t addr, uint16_t reg, uint8_t* buf, uint32_
 
 	while ( I2Cdrv->GetStatus ().busy );
 
-	if ( I2Cdrv->GetDataCount () != 1 )
+	if ( I2Cdrv->GetDataCount () != ( int )len + 2 )
 	{
 		// data count mismatch
 		return 3;
