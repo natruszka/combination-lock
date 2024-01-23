@@ -1,5 +1,6 @@
 #include "touchscreen_LCD.h"
 #include "fm24clxx.h"
+#include "delay.h"
 
 #define SERVICE_PASS_ADDR (0x0004)
 #define USER_PASS_ADDR (0x0000)
@@ -12,17 +13,6 @@ float E;
 float F;
 
 static bool isConf;
-
-static void touchpanelDelayUS ( uint32_t cnt )
-{
-	volatile uint32_t i;
-	for ( i = 0; i < cnt; i++ )
-	{
-		volatile uint8_t us = 12; /*  */
-		while ( us-- )
-			;
-	}
-}
 
 void lcdTouchscreenGetCoords ( int* x, int* y )
 {
@@ -103,6 +93,13 @@ int average ( int cords[], int len )
 
 void calculateConstants ( int x[], int y[], int len )
 {
+#ifdef __DEBUG__
+	char temp[70];
+	char srednie[40];
+#endif
+	int mozeA, mozeB, mozeC, mozeD, mozeE, mozeF;
+	float dzielnik;
+
 	int x1 = average ( x, len / 3 );
 	int x2 = average ( x + len / 3, len / 3 );
 	int x3 = average ( x + 2 * len / 3, len / 3 );
@@ -112,7 +109,6 @@ void calculateConstants ( int x[], int y[], int len )
 	int y3 = average ( y + 2 * len / 3, len / 3 );
 
 #ifdef __DEBUG__
-	char srednie[40];
 	sprintf ( srednie, "Srednia 1: %d, %d", x1, y1 );
 	send ( srednie );
 	sprintf ( srednie, "Srednia 2: %d, %d", x2, y2 );
@@ -121,13 +117,13 @@ void calculateConstants ( int x[], int y[], int len )
 	send ( srednie );
 #endif
 
-	float dzielnik = ( float )( y1 * ( x2 - x3 ) - y2 * ( x1 - x3 ) + y3 * ( x1 - x2 ) );
-	int mozeA = 200 * y1 - 200 * y3;
-	int mozeB = -200 * x1 + 200 * x3;
-	int mozeC = 20 * x2 * y1 - 220 * x3 * y1 - 20 * x1 * y2 + 20 * x3 * y2 + 220 * x1 * y3 - 20 * x2 * y3;
-	int mozeD = -280 * y1 + 280 * y2;
-	int mozeE = 280 * x1 - 280 * x2;
-	int mozeF = 300 * x2 * y1 - 20 * x3 * y1 - 300 * x1 * y2 + 20 * x3 * y2 + 20 * x1 * y3 - 20 * x2 * y3;
+	dzielnik = ( float )( y1 * ( x2 - x3 ) - y2 * ( x1 - x3 ) + y3 * ( x1 - x2 ) );
+	mozeA = 200 * y1 - 200 * y3;
+	mozeB = -200 * x1 + 200 * x3;
+	mozeC = 20 * x2 * y1 - 220 * x3 * y1 - 20 * x1 * y2 + 20 * x3 * y2 + 220 * x1 * y3 - 20 * x2 * y3;
+	mozeD = -280 * y1 + 280 * y2;
+	mozeE = 280 * x1 - 280 * x2;
+	mozeF = 300 * x2 * y1 - 20 * x3 * y1 - 300 * x1 * y2 + 20 * x3 * y2 + 20 * x1 * y3 - 20 * x2 * y3;
 	A = ( float )mozeA / dzielnik;
 	B = ( float )mozeB / dzielnik;
 	C = ( float )mozeC / dzielnik;
@@ -136,8 +132,7 @@ void calculateConstants ( int x[], int y[], int len )
 	F = ( float )mozeF / dzielnik;
 
 #ifdef __DEBUG__
-	char temp[70];
-	sprintf ( temp, "%f, %f, %f, %f, %f, %f", A, B, C, D, E, F );
+	sprintf ( temp, "%f, %f, %f, %f, %f, %f", ( double )A, ( double )B, ( double )C, ( double )D, ( double )E, ( double )F );
 	send ( temp );
 #endif
 	isConf = true;
@@ -157,8 +152,8 @@ bool lcdGetServiceCode ( void )
 #ifdef __DEBUG__
 		send ( "czekam na haslo" );
 #endif
-		code[i] = (uint8_t)lcdTouchscreenGetPassword ( &x, &y, true, pos );
-		touchpanelDelayUS ( 500000 );
+		code[i] = ( uint8_t )lcdTouchscreenGetPassword ( &x, &y, true, pos );
+		delayUS ( 500000 );
 		pos++;
 	}
 	res = checkCode ( code, 4, correctCode, 4 );
@@ -176,23 +171,23 @@ bool lcdGetServiceCode ( void )
 	return res;
 }
 
-void lcdNewPassword(bool isService)
+void lcdNewPassword ( bool isService )
 {
 	static int pos;
 	int x;
 	int y;
 	int res;
 	uint8_t code[4];
-	#ifdef __DEBUG__
-		send ( "czekam na nowe haslo" );
+#ifdef __DEBUG__
+	send ( "czekam na nowe haslo" );
 #endif
 	for ( int i = 0; i < 4; i++ )
 	{
-		code[i] = (uint8_t)lcdTouchscreenGetPassword ( &x, &y, true, pos );
-		touchpanelDelayUS ( 500000 );
+		code[i] = ( uint8_t )lcdTouchscreenGetPassword ( &x, &y, true, pos );
+		delayUS ( 500000 );
 		pos++;
 	}
-	if(isService)
+	if ( isService )
 	{
 		res = fm24clxx_fram_write ( SERVICE_PASS_ADDR, code, 4 );
 	}
@@ -200,18 +195,18 @@ void lcdNewPassword(bool isService)
 	{
 		res = fm24clxx_fram_write ( USER_PASS_ADDR, code, 4 );
 	}
-		pos = 0;
-	#ifdef __DEBUG__
-	if(res)
+	pos = 0;
+#ifdef __DEBUG__
+	if ( res )
 	{
 		send ( "Nie ustawiono nowego hasla" );
 	}
 	else
-		{
+	{
 		send ( "Ustawiono nowe haslo" );
 	}
 #endif
-	lcdClearInput();
+	lcdClearInput ();
 }
 void lcdTouchscreenCallibrate ( void )
 {
@@ -238,14 +233,14 @@ void lcdTouchscreenCallibrate ( void )
 #ifdef __DEBUG__
 		send ( "1 jestem po" );
 #endif
-		touchpanelDelayUS ( 2000 );
+		delayUS ( 2000 );
 	}
 #ifdef __DEBUG__
 	send ( "czekam po for 1" );
 #endif
-	touchpanelDelayUS ( 2000000 );
+	delayUS ( 2000000 );
 	lcdDrawCross ( 20, 20, 10, LCDBlack );
-	touchpanelDelayUS ( 2000000 );
+	delayUS ( 2000000 );
 	lcdDrawCross ( LCD_MAX_X - 20, 20, 10, LCDRed );
 	for ( i = 10; i < 20; ++i )
 	{
@@ -256,14 +251,14 @@ void lcdTouchscreenCallibrate ( void )
 #ifdef __DEBUG__
 		send ( "2 jestem po" );
 #endif
-		touchpanelDelayUS ( 2000 );
+		delayUS ( 2000 );
 	}
 #ifdef __DEBUG__
 	send ( "czekam po for 2" );
 #endif
-	touchpanelDelayUS ( 2000000 );
+	delayUS ( 2000000 );
 	lcdDrawCross ( LCD_MAX_X - 20, 20, 10, LCDBlack );
-	touchpanelDelayUS ( 2000000 );
+	delayUS ( 2000000 );
 	lcdDrawCross ( 20, LCD_MAX_Y - 20, 10, LCDRed );
 	for ( i = 20; i < 30; ++i )
 	{
@@ -274,17 +269,17 @@ void lcdTouchscreenCallibrate ( void )
 #ifdef __DEBUG__
 		send ( "3 jestem po" );
 #endif
-		touchpanelDelayUS ( 2000 );
+		delayUS ( 2000 );
 	}
 #ifdef __DEBUG__
 	send ( "czekam po for 3" );
 #endif
-	touchpanelDelayUS ( 2000000 );
+	delayUS ( 2000000 );
 	lcdDrawCross ( 20, LCD_MAX_Y - 20, 10, LCDBlack );
 #ifdef __DEBUG__
 	send ( "Done" );
 #endif
-	touchpanelDelayUS ( 2000 );
+	delayUS ( 2000 );
 	lcdClearScreen ();
 	calculateConstants ( x_arr, y_arr, 30 );
 }

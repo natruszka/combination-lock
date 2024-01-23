@@ -12,11 +12,18 @@
 #include "UART.h"
 #endif
 
+extern float A;
+extern float B;
+extern float C;
+extern float D;
+extern float E;
+extern float F;
+
 void lcdTouchscreenGetCoords ( int* x, int* y );
 char lcdTouchscreenGetPassword ( int* x, int* y, bool showChar, int pos );
 void lcdTouchscreenCallibrate ( void );
 bool lcdGetServiceCode ( void );
-void lcdNewPassword(bool isService);
+void lcdNewPassword ( bool isService );
 int getMin ( int cords[], int len );
 int getMax ( int cords[], int len );
 int average ( int cords[], int len );

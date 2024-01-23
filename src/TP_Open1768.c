@@ -1,14 +1,5 @@
 #include "TP_Open1768.h"
-
-static void touchpanelDelayUS ( uint32_t cnt )
-{
-	volatile uint32_t i;
-	for ( i = 0; i < cnt; i++ )
-	{
-		volatile uint8_t us = 12; /*  */
-		while ( us-- );
-	}
-}
+#include "delay.h"
 
 static uint8_t touchpanelWriteCmd ( uint8_t cmd )
 {
@@ -32,7 +23,7 @@ static int touchpanelReadAddress ( void )
 
 	temp = touchpanelWriteCmd ( 0x00 );
 	buf = ( unsigned short )( temp << 8 );
-	touchpanelDelayUS ( 1 );
+	delayUS ( 1 );
 	temp = touchpanelWriteCmd ( 0x00 );
 	buf |= temp;
 	buf >>= 3;
@@ -44,9 +35,9 @@ int touchpanelReadX ( void )
 {
 	int i;
 	TP_CS ( 0 )
-		touchpanelDelayUS ( 1 );
+		delayUS ( 1 );
 	touchpanelWriteCmd ( CHX );
-	touchpanelDelayUS ( 1 );
+	delayUS ( 1 );
 	i = touchpanelReadAddress ();
 	TP_CS ( 1 )
 		return i;
@@ -56,9 +47,9 @@ int touchpanelReadY ( void )
 {
 	int i;
 	TP_CS ( 0 )
-		touchpanelDelayUS ( 1 );
+		delayUS ( 1 );
 	touchpanelWriteCmd ( CHY );
-	touchpanelDelayUS ( 1 );
+	delayUS ( 1 );
 	i = touchpanelReadAddress ();
 	TP_CS ( 1 )
 		return i;
@@ -68,7 +59,7 @@ void touchpanelGetXY ( int* x, int* y )
 {
 	int adx, ady;
 	adx = touchpanelReadX ();
-	touchpanelDelayUS ( 1 );
+	delayUS ( 1 );
 	ady = touchpanelReadY ();
 	*x = adx;
 	*y = ady;

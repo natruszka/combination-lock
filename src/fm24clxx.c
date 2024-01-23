@@ -59,8 +59,8 @@ uint8_t fm24clxx_test ( void )
             fm24clxx_interface_debug_print ( "fm24clxx: read failed." );
             return 1;
         }
-        fm24clxx_interface_debug_print ( buf );
-        fm24clxx_interface_debug_print ( buf_check );
+        fm24clxx_interface_debug_print ( ( const char* )buf );
+        fm24clxx_interface_debug_print ( ( const char* )buf_check );
         for ( j = 0; j < 12; j++ )
         {
             /* check data */

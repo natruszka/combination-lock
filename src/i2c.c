@@ -1,8 +1,13 @@
 #include "i2c.h"
-#include "UART.h"
 #include "delay.h"
 #include "GPIO_LPC17xx.h"
+
+#ifdef __DEBUG__
+#include "UART.h"
+#endif
+
 #include <string.h>
+#include <stdlib.h>
 
 extern ARM_DRIVER_I2C Driver_I2C0;
 static ARM_DRIVER_I2C* I2Cdrv = &Driver_I2C0;
@@ -108,11 +113,10 @@ uint8_t i2c0_read_address16 ( uint8_t addr, uint16_t reg, uint8_t* buf, uint32_t
 	return 0;
 }
 
-uint8_t i2c0_write ( uint8_t addr, uint8_t reg, uint8_t* buf, uint32_t len )
+uint8_t i2c0_write ( uint8_t addr, uint8_t reg, uint8_t* buf, const uint32_t len )
 {
 	int status;
-
-	uint8_t msg[len + 1];
+	uint8_t* msg = ( uint8_t* )malloc ( len + 1 );
 
 	msg[0] = reg;
 	memcpy ( msg + 1, buf, len );
@@ -134,13 +138,15 @@ uint8_t i2c0_write ( uint8_t addr, uint8_t reg, uint8_t* buf, uint32_t len )
 		return 3;
 	}
 
+	free ( msg );
+
 	return 0;
 }
 
 uint8_t i2c0_write_address16 ( uint8_t addr, uint16_t reg, uint8_t* buf, uint32_t len )
 {
 	int status;
-	uint8_t msg[len + 2];
+	uint8_t* msg = ( uint8_t* )malloc ( len + 2 );
 
 	msg[0] = ( reg >> 8 ) & 0xFF;
 	msg[1] = reg & 0xFF;
@@ -162,6 +168,8 @@ uint8_t i2c0_write_address16 ( uint8_t addr, uint16_t reg, uint8_t* buf, uint32_
 		// data count mismatch
 		return 3;
 	}
+
+	free ( msg );
 
 	return 0;
 }

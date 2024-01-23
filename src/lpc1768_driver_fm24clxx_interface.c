@@ -36,8 +36,11 @@
 
 #include "lpc1768_driver_fm24clxx_interface.h"
 #include "i2c.h"
-#include "UART.h"
 #include "delay.h"
+
+#ifdef __DEBUG__
+#include "UART.h"
+#endif
 
 #include <stdarg.h>
 

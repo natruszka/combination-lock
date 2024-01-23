@@ -161,9 +161,9 @@ uint8_t fm24clxx_deinit ( fm24clxx_handle_t* handle )
 
     if ( handle->iic_deinit () != 0 )                                    /* iic deinit */
     {
-        #ifdef __DEBUG__
+#ifdef __DEBUG__
         handle->debug_print ( "fm24clxx: iic deinit failed.\n" );        /* iic deinit failed */
-        #endif
+#endif
 
         return 1;                                                     /* return error */
     }

@@ -1,7 +1,7 @@
+#ifdef __DEBUG__
+
 #include "UART.h"
 #include "string.h"
-
-#ifdef __DEBUG__
 
 void send ( const char* str )
 {

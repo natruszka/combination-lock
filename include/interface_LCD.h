@@ -10,6 +10,8 @@
 #include "UART.h"
 #endif
 
+extern int passpos;
+
 void lcdWriteChar ( uint16_t x_start, uint16_t y_start, unsigned char letter[16] );
 void lcdWriteString ( const char* text, uint16_t x_start, uint16_t y_start );
 void lcdDrawLine ( uint16_t x0, uint16_t y0,

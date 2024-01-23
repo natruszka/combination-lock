@@ -8,9 +8,17 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-	#ifdef __DEBUG__
+#ifdef __DEBUG__
+  /**
+   * @brief Simple test function for the FM24CLXX FRAM.
+   * It writes a string to the FRAM and then reads it back few times.
+   * @return status code
+   *        - 0 success
+   *       - 1 test failed
+   * @note none
+   */
   uint8_t fm24clxx_test ( void );
-	#endif
+#endif
   /**
    * @brief     init
    * @param[in] type is the chip type

@@ -4,6 +4,7 @@
 #include "GPIO_LPC17xx.h"
 #include "touchscreen_LCD.h"
 #include "fm24clxx.h"
+#include "delay.h"
 
 #include <stdbool.h>
 #include <string.h>
@@ -33,17 +34,6 @@ extern float F;
 int passpos;
 
 static bool isService;
-
-static void touchpanelDelayUS ( uint32_t cnt )
-{
-	volatile uint32_t i;
-	for ( i = 0; i < cnt; i++ )
-	{
-		volatile uint8_t us = 12; /*  */
-		while ( us-- )
-			;
-	}
-}
 
 void lcdWriteChar ( uint16_t x_start, uint16_t y_start, unsigned char letter[16] )
 {
@@ -202,20 +192,22 @@ void lcdClearInput ( void )
 
 void lcdDisplayCode ( char letter, bool isBackspace, bool isEnter )
 {
+#ifdef __DEBUG__
+    char buf_uart[2];
+#endif
     static uint8_t code[4];
     unsigned char buffer[16] = { '\0' };
     uint8_t correctCode[4];
-		fm24clxx_fram_read ( USER_PASS_ADDR, correctCode, 4 );
+    fm24clxx_fram_read ( USER_PASS_ADDR, correctCode, 4 );
 #ifdef __DEBUG__
-    char buf_uart[2];
     buf_uart[0] = letter;
     buf_uart[1] = '\0';
     send ( buf_uart );
 #endif
-		if(isService)
-		{
-			fm24clxx_fram_read ( SERVICE_PASS_ADDR, correctCode, 4 );
-		}
+    if ( isService )
+    {
+        fm24clxx_fram_read ( SERVICE_PASS_ADDR, correctCode, 4 );
+    }
     if ( isBackspace )
     {
         if ( passpos == 0 )
@@ -254,13 +246,13 @@ void lcdDisplayInfo ( bool isOpen )
     {
         lcdWriteString ( "OPEN    ", xSecondRow, 8 );
         GPIO_PinWrite ( 0, 26, 1 );
-				touchpanelDelayUS(20000);
+        delayUS ( 20000 );
         RTC_ShowOpenDate ();
     }
     else
     {
         GPIO_PinWrite ( 0, 26, 0 );
-				touchpanelDelayUS(20000);
+        delayUS ( 20000 );
         lcdWriteString ( "CLOSED  ", xSecondRow, 8 );
     }
 }
@@ -275,17 +267,17 @@ void lcdServisCode ( void )
 void lcdNewCode ( void )
 {
     lcdWriteString ( "Podaj kod serwisowy     ", 0, 32 );
-    while(!lcdGetServiceCode ());
-		lcdWriteString ( "Podaj nowe haslo        ", 0, 32 );
-		lcdNewPassword(false);
+    while ( !lcdGetServiceCode () );
+    lcdWriteString ( "Podaj nowe haslo        ", 0, 32 );
+    lcdNewPassword ( false );
 }
 
 void lcdNewServiceCode ( void )
 {
     lcdWriteString ( "Podaj stary kod serwisowy", 0, 32 );
-    while(!lcdGetServiceCode ());
-		lcdWriteString ( "Podaj nowy kod serwisowy ", 0, 32 );
-		lcdNewPassword(true);
+    while ( !lcdGetServiceCode () );
+    lcdWriteString ( "Podaj nowy kod serwisowy ", 0, 32 );
+    lcdNewPassword ( true );
 }
 void lcdInsertPassword ( void )
 {
@@ -318,6 +310,7 @@ bool checkCode ( const uint8_t* code, int len, const uint8_t correctCode[], int 
     }
     if ( failureCount >= 3 )
     {
+        passpos = 0;
         lcdServisCode ();
         return false;
     }
@@ -328,7 +321,7 @@ bool checkCode ( const uint8_t* code, int len, const uint8_t correctCode[], int 
 
 void lcdDisplayDate ( const char* date )
 {
-    lcdWriteString ( date, 0, 8 ); 
+    lcdWriteString ( date, 0, 8 );
 }
 
 void lcdHandler ( int x, int y )
